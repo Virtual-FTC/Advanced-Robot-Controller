@@ -124,7 +124,15 @@ public class MainActivity extends AppCompatActivity {
                     isSeletedProgramLinearOpMode = true;
                 } catch (Exception ignore) {
                     opMode.gamepad1 = new Gamepad();
-                    opMode.init();
+                    try {
+                        opMode.init();
+                    } catch (Exception e) {
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                     canUpdateGamepad = true;
                     isSeletedProgramLinearOpMode = false;
                 }
@@ -197,9 +205,14 @@ public class MainActivity extends AppCompatActivity {
                                 initStartButton.setText("INIT");
                             }
                         });
-//                        ((LinearOpMode) opMode).start();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+                    } catch (Exception ignore) {
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 }
             });
