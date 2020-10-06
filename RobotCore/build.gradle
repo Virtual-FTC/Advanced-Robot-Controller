@@ -1,0 +1,11 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(path: ':FtcRobotController')
+    implementation 'org.java-websocket:Java-WebSocket:1.5.1'
+    implementation 'org.glassfish:javax.json:1.0.4'
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"

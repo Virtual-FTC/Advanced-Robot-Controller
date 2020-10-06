@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="FTC" target="1.7" />
+      <module name="FtcRobotController" target="1.7" />
+      <module name="Hardware" target="1.7" />
+      <module name="lib" target="1.7" />
+      <module name="RobotCore" target="1.7" />
+      <module name="TeamCode" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
