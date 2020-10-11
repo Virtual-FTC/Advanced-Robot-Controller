@@ -21,27 +21,27 @@ public class BasicOpMode_Linear extends LinearOpMode
 
     @Override
     public void runOpMode() {
-        leftDrive = new DcMotorA();
+        leftDrive = new DcMotorA("motor1");
 //        waitForStart();
 
         for(int i = 0; i < 4; i++) {
-            leftDrive.setLinVel(1.0, 0);
+            leftDrive.setPower(1.0f);
 
-            long startTime = System.currentTimeMillis();
-            while (System.currentTimeMillis() < startTime + 1000) {
-                //wait for time to be over
-            }
-
-            leftDrive.setLinVel(0, 0);
-            leftDrive.setTurn(1.0);
-
-            startTime = System.currentTimeMillis();
-            while (System.currentTimeMillis() < startTime + 1200) {
-                //wait for time to be over
-            }
-
-            leftDrive.setLinVel(0, 0);
-            leftDrive.setTurn(0);
+//            long startTime = System.currentTimeMillis();
+//            while (System.currentTimeMillis() < startTime + 1000) {
+//                //wait for time to be over
+//            }
+//
+//            leftDrive.setLinVel(0, 0);
+//            leftDrive.setTurn(1.0);
+//
+//            startTime = System.currentTimeMillis();
+//            while (System.currentTimeMillis() < startTime + 1200) {
+//                //wait for time to be over
+//            }
+//
+//            leftDrive.setLinVel(0, 0);
+//            leftDrive.setTurn(0);
         }
 
         requestOpModeStop();

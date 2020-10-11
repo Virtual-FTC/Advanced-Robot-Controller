@@ -7,30 +7,27 @@
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/initStartButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="INIT"
-        android:id="@+id/initStartButton"
-        />
+        android:text="INIT" />
 
     <Spinner
+        android:id="@+id/classSelector"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-50dp"
         android:layout_alignTop="@+id/initStartButton"
-        android:id="@+id/classSelector"
-        />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-50dp" />
 
     <ProgressBar
+        android:id="@+id/loadingSign"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_centerInParent="true"
-        android:id="@+id/loadingSign"
-        android:visibility="visible"
         android:layout_below="@id/initStartButton"
+        android:layout_centerInParent="true"
         android:layout_marginTop="25dp"
         android:progressDrawable="@drawable/circular_progress_bar"
-        />
+        android:visibility="visible" />
 </RelativeLayout>

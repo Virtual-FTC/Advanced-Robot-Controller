@@ -10,7 +10,8 @@ public class BasicOpMode_Iterative extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorA leftDrive;
+    private DcMotorA motor1, motor2, motor3, motor4, motor5, motor6, motor7, motor8;
+    double movementPower = 1.0, fL_power, fR_power, bL_power, bR_power;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -18,7 +19,14 @@ public class BasicOpMode_Iterative extends OpMode
 
     @Override
     public void init() {
-        leftDrive = new DcMotorA();
+        motor1 = new DcMotorA("motor1");//this.hardwareMap.dcMotor.get("motor1");
+        motor2 = new DcMotorA("motor2");//this.hardwareMap.dcMotor.get("motor1");
+        motor3 = new DcMotorA("motor3");//this.hardwareMap.dcMotor.get("motor1");
+        motor4 = new DcMotorA("motor4");//this.hardwareMap.dcMotor.get("motor1");
+        motor5 = new DcMotorA("motor5");//this.hardwareMap.dcMotor.get("motor1");
+        motor6 = new DcMotorA("motor6");//this.hardwareMap.dcMotor.get("motor1");
+        motor7 = new DcMotorA("motor7");//this.hardwareMap.dcMotor.get("motor1");
+        motor8 = new DcMotorA("motor8");//this.hardwareMap.dcMotor.get("motor1");
     }
 
     /*
@@ -41,8 +49,29 @@ public class BasicOpMode_Iterative extends OpMode
      */
     @Override
     public void loop() {
-        leftDrive.setLinVel(gamepad1.left_stick_y, gamepad1.left_stick_x);
-        leftDrive.setTurn(-gamepad1.right_stick_x);
+        fL_power = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * Math.cos(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4) - gamepad1.right_stick_x / 2;
+        fR_power = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * Math.sin(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4) + gamepad1.right_stick_x / 2;
+        bL_power = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * Math.sin(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4) - gamepad1.right_stick_x / 2;
+        bR_power = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * Math.cos(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4) + gamepad1.right_stick_x / 2;
+
+        motor1.setPower(-movementPower * fL_power);
+        motor2.setPower(-movementPower * fR_power);
+        motor3.setPower(-movementPower * bL_power);
+        motor4.setPower(-movementPower * bR_power);
+
+        if(gamepad1.a) {
+            motor5.setPower(1.0);
+        } else if(gamepad1.b) {
+            motor6.setPower(1.0);
+        } else if(gamepad1.y) {
+            motor7.setPower(1.0);
+            motor8.setPower(-1.0);
+        } else {
+            motor5.setPower(0.0);
+            motor6.setPower(0.0);
+            motor7.setPower(0.0);
+            motor8.setPower(0.0);
+        }
     }
 
     /*

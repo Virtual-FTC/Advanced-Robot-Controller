@@ -92,6 +92,9 @@ public class DcMotorImpl implements DcMotor {
      */
     public synchronized void setPower(double power){
         this.power = Math.max(-1, Math.min(1, power));
+
+
+
     }
 
     /**

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -122,21 +123,31 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     LinearOpMode linearOpMode = ((LinearOpMode) opMode);
                     isSeletedProgramLinearOpMode = true;
+                    canUpdateGamepad = true;
+                    enableProgramStart();
                 } catch (Exception ignore) {
                     opMode.gamepad1 = new Gamepad();
                     try {
                         opMode.init();
+                        canUpdateGamepad = true;
+                        isSeletedProgramLinearOpMode = false;
+                        enableProgramStart();
                     } catch (Exception e) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
                                 Toast.makeText(MainActivity.this, "Unable to connect to VM", Toast.LENGTH_SHORT).show();
+                                Button initStartButton = (Button) findViewById(R.id.initStartButton);
+                                initStartButton.setEnabled(true);
+                                initStartButton.setTag(0);
+                                initStartButton.setText("INIT");
+                                progressBar.setVisibility(View.INVISIBLE);
+                                canUpdateGamepad = false;
+                                isSeletedProgramLinearOpMode = null;
                             }
                         });
                     }
-                    canUpdateGamepad = true;
-                    isSeletedProgramLinearOpMode = false;
+
                 }
-                enableProgramStart();
             }
         });
         thread.setPriority(Thread.MAX_PRIORITY);
@@ -252,6 +263,62 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         Toast.makeText(this, "Gamepad Not Connected.", Toast.LENGTH_SHORT).show();
+    }
+
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((event.getSource() & InputDevice.SOURCE_GAMEPAD)
+                == InputDevice.SOURCE_GAMEPAD) {
+            if (event.getRepeatCount() == 0) {
+                switch (keyCode) {
+                    default:
+                        if (canUpdateGamepad) {
+                            if (keyCode == KeyEvent.KEYCODE_BUTTON_A) {
+                                opMode.gamepad1.a = true;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_B) {
+                                opMode.gamepad1.b = true;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_X) {
+                                opMode.gamepad1.x = true;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_Y) {
+                                opMode.gamepad1.y = true;
+                            }
+                            return true;
+                        }
+
+                        break;
+                }
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if ((event.getSource() & InputDevice.SOURCE_GAMEPAD)
+                == InputDevice.SOURCE_GAMEPAD) {
+            if (event.getRepeatCount() == 0) {
+                switch (keyCode) {
+                    default:
+                        if (canUpdateGamepad) {
+                            if (keyCode == KeyEvent.KEYCODE_BUTTON_A) {
+                                opMode.gamepad1.a = false;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_B) {
+                                opMode.gamepad1.b = false;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_X) {
+                                opMode.gamepad1.x = false;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_Y) {
+                                opMode.gamepad1.y = false;
+                            }
+                            return true;
+                        }
+
+                        break;
+                }
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     /**

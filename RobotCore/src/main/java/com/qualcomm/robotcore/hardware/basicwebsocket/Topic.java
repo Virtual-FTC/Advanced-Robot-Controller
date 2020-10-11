@@ -4,6 +4,8 @@ package com.qualcomm.robotcore.hardware.basicwebsocket;
 
 import com.qualcomm.robotcore.hardware.basicwebsocket.callback.TopicCallback;
 import com.qualcomm.robotcore.hardware.basicwebsocket.messages.Message;
+import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.DcMotorInput;
+import com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.Float32;
 
 import java.util.ArrayList;
 

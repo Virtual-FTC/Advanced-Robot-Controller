@@ -1,41 +1,30 @@
 package com.qualcomm.robotcore.hardware;
 
-import com.qualcomm.robotcore.hardware.basicwebsocket.*;
-import com.qualcomm.robotcore.hardware.basicwebsocket.messages.geometry.Twist;
-import com.qualcomm.robotcore.hardware.basicwebsocket.messages.geometry.Vector3;
-
+import com.qualcomm.robotcore.hardware.basicwebsocket.Ros;
+import com.qualcomm.robotcore.hardware.basicwebsocket.Topic;
+import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.DcMotorInput;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 public class DcMotorA {
-    String rosIp = "35.222.238.30";
+    String rosIp = "35.223.111.114";
 
     Ros client = null;
 
-    Topic xVelPub = null;
+    Topic motorPub = null;
 
-    Vector3 linear = new Vector3(0,0,0);
-    double linX = 0.0;
-    double linY = 0.0;
-    double linZ = 0.0;
-    Vector3 angular = new Vector3(0,0,0);
-    double angX = 0.0;
-    double angY = 0.0;
-    double angZ = 0.0;
+    double power = 0.0;
 
-    double xVel = 1.0;
-    double thVel = 1.0;
-
-    public DcMotorA() {
+    public DcMotorA(String motorName) {
         try {
             client = new Ros(new URI("ws://" + rosIp + ":9091"));
             client.connect();
         } catch (URISyntaxException | InterruptedException e) {
             e.printStackTrace();
         }
-        xVelPub = new Topic(client, "/cmd_vel", "geometry_msgs/Twist");
-        Twist toSend = new Twist(linear, angular);
-        xVelPub.publish(toSend);
+        motorPub = new Topic(client, "/unity/" + motorName + "/input", "ftc_msgs/DcMotorInput");
+        DcMotorInput toSend = new DcMotorInput(power, "");
+        motorPub.publish(toSend);
     }
 
     ZeroPowerBehavior zeroPowerBehavior;
@@ -66,21 +55,14 @@ public class DcMotorA {
         this.runMode = runMode;
     }
 
-    public void setLinVel(double x, double y) {
-        linX = x;
-        linY = y;
-        publishCmdVel();
-    }
-
-    public void setTurn(double angleVel) {
-        angZ = angleVel;
+    public void setPower(double power) {
+        this.power = power;
         publishCmdVel();
     }
 
     public void publishCmdVel(){
-        linear = new Vector3(linX, linY, linZ);
-        angular = new Vector3(angX, angY, angZ);
-        Twist toSend = new Twist(linear, angular);
-        xVelPub.publish(toSend);
+        DcMotorInput dcMotorInputToSend = new DcMotorInput(power, "");
+//        System.out.println("toSend: " +  dcMotorInputToSend.getCmd() + ", " + dcMotorInputToSend.getMode());
+        motorPub.publish(dcMotorInputToSend);
     }
 }
