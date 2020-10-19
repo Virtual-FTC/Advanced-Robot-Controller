@@ -3,6 +3,7 @@ package com.example.webrosrobotcontroller;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Path;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     Spinner opModeSelector;
     Boolean isSeletedProgramLinearOpMode = null;
     Thread opModeThread;
+    Thread gamepadCheckThread;
     ProgressBar progressBar;
 
     @Override
@@ -42,40 +45,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         checkForGamepad();
         populateClassSelector();
-//        initStartButton.setTag(0);
-//        initStartButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                final int status = (Integer) v.getTag();
-////                if(status == 0) {
-////                    try {
-////                        Class opModeClass = Class.forName("org.firstinspires.ftc.teamcode." + opModeSelector.getSelectedItem().toString());//opModeSelector.getSelectedItem().toString().getClass();
-////                        opMode = (OpMode) opModeClass.newInstance();
-////                        initStartButton.setText("START");
-////                        v.setTag(1); //pause
-////                        try {
-////                            ((LinearOpMode) opMode).runOpMode();
-////                            isSeletedProgramLinearOpMode = true;
-////                        } catch (Exception ignore) {
-////                            opMode.gamepad1 = new Gamepad();
-////                            opMode.init();
-////                            canUpdateGamepad = true;
-////                        }
-////                    } catch (Exception e) {
-////                        e.printStackTrace();
-////                    }
-////
-////                } else if(status == 1) {
-////                    launchOpModeThread(isSeletedProgramLinearOpMode);
-////                    initStartButton.setText("STOP");
-////                    v.setTag(1); //pause
-////                } else if(status == 2) {
-////                    opModeThread.interrupt();
-////                    initStartButton.setText("INIT");
-////                    v.setTag(0); //pause
-////                }
-//            }
-//        });
         progressBar = findViewById(R.id.loadingSign);
         progressBar.setVisibility(View.INVISIBLE);
 
@@ -106,12 +75,25 @@ public class MainActivity extends AppCompatActivity {
                     opModeThread.interrupt();
                     initStartButton.setText("INIT");
                     v.setTag(0); //pause
-                    isSeletedProgramLinearOpMode = false;
+                    isSeletedProgramLinearOpMode = null;
                     opModeThread = null;
 
                 }
             }
         });
+    }
+
+    private void launchGamepadThread() {
+        gamepadCheckThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    checkForGamepad();
+                }
+            }
+        });
+        gamepadCheckThread.setPriority(Thread.MAX_PRIORITY);
+        gamepadCheckThread.start();
     }
 
     private void initOpModeThread() {
@@ -259,10 +241,21 @@ public class MainActivity extends AppCompatActivity {
             if (((sources & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD)
                     || ((sources & InputDevice.SOURCE_JOYSTICK)
                     == InputDevice.SOURCE_JOYSTICK)) {
+//                MainActivity.this.runOnUiThread(new Runnable() {
+//                    public void run() {
+//                        ImageView gamepadImage = (ImageView) findViewById(R.id.gamepadImage);
+//                        gamepadImage.setVisibility(View.VISIBLE);
+//                    }
+//                });
                 return;
             }
+//            MainActivity.this.runOnUiThread(new Runnable() {
+//                public void run() {
+//                    ImageView gamepadImage = (ImageView) findViewById(R.id.gamepadImage);
+//                    gamepadImage.setVisibility(View.INVISIBLE);
+//                }
+//            });
         }
-        Toast.makeText(this, "Gamepad Not Connected.", Toast.LENGTH_SHORT).show();
     }
 
 

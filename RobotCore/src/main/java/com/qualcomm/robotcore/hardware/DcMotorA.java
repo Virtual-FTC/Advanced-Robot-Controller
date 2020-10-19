@@ -7,7 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class DcMotorA {
-    String rosIp = "35.223.111.114";
+    String rosIp = "35.238.142.42";
 
     Ros client = null;
 

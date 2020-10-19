@@ -1,0 +1,15 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle" >
+    <!-- This is the stroke you want to define -->
+    <stroke android:width="3dp"
+        android:color="@android:color/black"/>
+
+    <gradient
+        android:centerColor="@color/redMain"
+        android:endColor="@color/redDark"
+        android:gradientRadius="125dp"
+        android:startColor="@color/redMain"
+        android:type="radial" >
+    </gradient>
+
+</shape>

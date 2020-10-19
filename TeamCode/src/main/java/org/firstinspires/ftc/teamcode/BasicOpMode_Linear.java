@@ -13,7 +13,7 @@ import javax.sound.sampled.Line;
 public class BasicOpMode_Linear extends LinearOpMode
 {
     // Declare OpMode members.
-    private DcMotorA leftDrive;
+    private DcMotorA motor1, motor2, motor3, motor4;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -21,27 +21,33 @@ public class BasicOpMode_Linear extends LinearOpMode
 
     @Override
     public void runOpMode() {
-        leftDrive = new DcMotorA("motor1");
+
+        motor1 = new DcMotorA("motor1");//this.hardwareMap.dcMotor.get("motor1");
+        motor2 = new DcMotorA("motor2");//this.hardwareMap.dcMotor.get("motor1");
+        motor3 = new DcMotorA("motor3");//this.hardwareMap.dcMotor.get("motor1");
+        motor4 = new DcMotorA("motor4");//this.hardwareMap.dcMotor.get("motor1");
 //        waitForStart();
 
         for(int i = 0; i < 4; i++) {
-            leftDrive.setPower(1.0f);
+            long startTime = System.currentTimeMillis();
+            while (System.currentTimeMillis() < startTime + 1000) {
+                //wait for time to be over
+            }
 
-//            long startTime = System.currentTimeMillis();
-//            while (System.currentTimeMillis() < startTime + 1000) {
-//                //wait for time to be over
-//            }
-//
-//            leftDrive.setLinVel(0, 0);
-//            leftDrive.setTurn(1.0);
-//
-//            startTime = System.currentTimeMillis();
-//            while (System.currentTimeMillis() < startTime + 1200) {
-//                //wait for time to be over
-//            }
-//
-//            leftDrive.setLinVel(0, 0);
-//            leftDrive.setTurn(0);
+            motor1.setPower(1.0);
+            motor2.setPower(1.0);
+            motor3.setPower(1.0);
+            motor4.setPower(1.0);
+
+            startTime = System.currentTimeMillis();
+            while (System.currentTimeMillis() < startTime + 1200) {
+                //wait for time to be over
+            }
+
+            motor1.setPower(1.0);
+            motor2.setPower(-1.0);
+            motor3.setPower(1.0);
+            motor4.setPower(-1.0);
         }
 
         requestOpModeStop();
