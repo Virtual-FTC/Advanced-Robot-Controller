@@ -2,10 +2,7 @@ package com.example.webrosrobotcontroller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.Path;
-import android.media.Image;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -13,14 +10,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorA;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.io.IOException;
@@ -38,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     Thread opModeThread;
     Thread gamepadCheckThread;
     ProgressBar progressBar;
+    EditText robotVM_IPAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +45,14 @@ public class MainActivity extends AppCompatActivity {
         populateClassSelector();
         progressBar = findViewById(R.id.loadingSign);
         progressBar.setVisibility(View.INVISIBLE);
-
+        robotVM_IPAddress = findViewById(R.id.robotVM_IPAddress);
         final Button initStartButton = (Button) findViewById(R.id.initStartButton);
         initStartButton.setTag(0);
         initStartButton.setText("INIT");
         initStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                DcMotorA.rosIp = robotVM_IPAddress.getText().toString();
                 final int status = (Integer) v.getTag();
                 if (status == 0) {
                     try {
@@ -79,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     opModeThread = null;
 
                 }
+
             }
         });
     }
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         gamepadCheckThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true) {
+                while (true) {
                     checkForGamepad();
                 }
             }
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorA.rosIp, Toast.LENGTH_SHORT).show();
                                 Button initStartButton = (Button) findViewById(R.id.initStartButton);
                                 initStartButton.setEnabled(true);
                                 initStartButton.setTag(0);
@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception ignore) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorA.rosIp, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     MainActivity.this.wait(2500); //wait for 2.5 seconds to run any init code and establish web socket communication
-                    while (true) {
+                    while (opModeThread != null) {
                         opMode.loop();
                     }
                 }
@@ -257,7 +257,6 @@ public class MainActivity extends AppCompatActivity {
 //            });
         }
     }
-
 
 
     @Override
