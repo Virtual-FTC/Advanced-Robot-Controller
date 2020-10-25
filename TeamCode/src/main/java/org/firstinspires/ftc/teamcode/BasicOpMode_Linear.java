@@ -4,9 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name="Basic OpMode Linear")
-public class BasicOpMode_Linear extends LinearOpMode
-{
+@Autonomous(name = "Basic OpMode Linear")
+public class BasicOpMode_Linear extends LinearOpMode {
     // Declare OpMode members.
     private DcMotor motor1, motor2, motor3, motor4;
 
@@ -22,29 +21,53 @@ public class BasicOpMode_Linear extends LinearOpMode
         motor3 = this.hardwareMap.dcMotor.get("motor3");
         motor4 = this.hardwareMap.dcMotor.get("motor4");
 //        waitForStart();
+        motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        for(int i = 0; i < 4; i++) {
-            long startTime = System.currentTimeMillis();
-            while (System.currentTimeMillis() < startTime + 1000) {
-                //wait for time to be over
-            }
+        //Square movement example program
 
+
+        moveForwardAndTurn();
+        moveForwardAndTurn();
+        moveForwardAndTurn();
+        moveForwardAndTurn();
+
+        requestOpModeStop();
+    }
+
+    private void moveForwardAndTurn() {
+        motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        while (motor1.getCurrentPosition() < 1000 && motor2.getCurrentPosition() < 1000 && motor3.getCurrentPosition() < 1000 && motor4.getCurrentPosition() < 1000) {
             motor1.setPower(1.0);
             motor2.setPower(1.0);
             motor3.setPower(1.0);
             motor4.setPower(1.0);
-
-            startTime = System.currentTimeMillis();
-            while (System.currentTimeMillis() < startTime + 1200) {
-                //wait for time to be over
-            }
-
-            motor1.setPower(1.0);
-            motor2.setPower(-1.0);
-            motor3.setPower(1.0);
-            motor4.setPower(-1.0);
         }
+        motor1.setPower(0.0);
+        motor2.setPower(0.0);
+        motor3.setPower(0.0);
+        motor4.setPower(0.0);
 
-        requestOpModeStop();
+        motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        while (motor1.getCurrentPosition() > -8000 && motor2.getCurrentPosition() < 8000 && motor3.getCurrentPosition() > -8000 && motor4.getCurrentPosition() < 8000) {
+            motor1.setPower(-1.0);
+            motor2.setPower(1.0);
+            motor3.setPower(-1.0);
+            motor4.setPower(1.0);
+        }
+        motor1.setPower(0.0);
+        motor2.setPower(0.0);
+        motor3.setPower(0.0);
+        motor4.setPower(0.0);
     }
 }

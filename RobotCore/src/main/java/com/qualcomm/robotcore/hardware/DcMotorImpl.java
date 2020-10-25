@@ -87,7 +87,8 @@ public class DcMotorImpl implements DcMotor {
             public void handleMessage(Message message) {
                 JsonObject data = message.toJsonObject();
                 if(data.getJsonNumber("encoder_data").doubleValue() != 0) {
-                    encoderPosition = data.getJsonNumber("encoder_data").doubleValue();
+                    actualPosition = data.getJsonNumber("encoder_data").doubleValue();
+                    encoderPosition = direction == Direction.REVERSE ? (encoderBasePosition - actualPosition) : -(encoderBasePosition - actualPosition);
                 }
             }
         });
@@ -151,7 +152,7 @@ public class DcMotorImpl implements DcMotor {
      * @return number of encoder ticks
      */
     public synchronized int getCurrentPosition(){
-        return (int) (encoderPosition - encoderBasePosition);
+        return (int) (encoderPosition);
     }
 
     /**

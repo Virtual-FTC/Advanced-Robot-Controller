@@ -30,8 +30,10 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.robotcore.eventloop.opmode;
+import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.DcMotorOutput;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -102,6 +104,8 @@ public abstract class OpMode {
    * @see #stop()
    */
   public final void requestOpModeStop() {
+//    DcMotorImpl.motorOutputPub = null;
+//    DcMotorImpl.motorPub = null;
     isRunning = false;
     stop();
   }
