@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotorA;
+import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.io.IOException;
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorA.rosIp, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorImpl.rosIp, Toast.LENGTH_SHORT).show();
                                 Button initStartButton = (Button) findViewById(R.id.initStartButton);
                                 initStartButton.setEnabled(true);
                                 initStartButton.setTag(0);
@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception ignore) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorA.rosIp, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorImpl.rosIp, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }

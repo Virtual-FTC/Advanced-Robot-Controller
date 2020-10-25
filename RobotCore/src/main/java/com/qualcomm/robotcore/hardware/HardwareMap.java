@@ -35,6 +35,8 @@ Modified by FTC Team Beta 8397 for use in the Virtual_Robot Simulator
 
 package com.qualcomm.robotcore.hardware;
 
+import com.qualcomm.robotcore.hardware.configuration.MotorType;
+
 import java.util.*;
 
 /**
@@ -195,16 +197,16 @@ public class HardwareMap implements Iterable<HardwareDevice>{
          * @return
          */
         public synchronized DEVICE_TYPE get(String deviceName){
-            if (!active){
-                System.out.println("ERROR: Cannot obtain references to hardware before INIT button is pressed.");
-                return null;
-            }
-            deviceName = deviceName.trim();
-            DEVICE_TYPE result = map.get(deviceName);
-            if (result == null) throw new IllegalArgumentException(
-                    String.format("No %s named %s is found.", deviceTypeClass.getName(), deviceName)
-            );
-            return result;
+//            if (!active){
+//                System.out.println("ERROR: Cannot obtain references to hardware before INIT button is pressed.");
+//                return null;
+//            }
+//            deviceName = deviceName.trim();
+//            DEVICE_TYPE result = map.get(deviceName);
+//            if (result == null) throw new IllegalArgumentException(
+//                    String.format("No %s named %s is found.", deviceTypeClass.getName(), deviceName)
+//            );
+            return (DEVICE_TYPE) new DcMotorImpl(deviceName);
         }
 
         /**

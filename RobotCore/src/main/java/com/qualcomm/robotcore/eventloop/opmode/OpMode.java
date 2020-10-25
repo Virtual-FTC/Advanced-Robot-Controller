@@ -31,6 +31,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.robotcore.eventloop.opmode;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.concurrent.TimeUnit;
@@ -38,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class OpMode {
 
   public Gamepad gamepad1;
+  public HardwareMap hardwareMap = new HardwareMap();
   public double time = 0.0;
 
   // internal time tracking

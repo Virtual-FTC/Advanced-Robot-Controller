@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorA;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="Basic: Iterative OpMode", group="TeleOp")
@@ -10,7 +10,7 @@ public class BasicOpMode_Iterative extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorA motor1, motor2, motor3, motor4, motor5, motor6, motor7, motor8;
+    private DcMotor motor1, motor2, motor3, motor4, motor5, motor6, motor7, motor8;
     double movementPower = 1.0, fL_power, fR_power, bL_power, bR_power;
 
     /*
@@ -19,14 +19,14 @@ public class BasicOpMode_Iterative extends OpMode
 
     @Override
     public void init() {
-        motor1 = new DcMotorA("motor1");//this.hardwareMap.dcMotor.get("motor1");
-        motor2 = new DcMotorA("motor2");//this.hardwareMap.dcMotor.get("motor1");
-        motor3 = new DcMotorA("motor3");//this.hardwareMap.dcMotor.get("motor1");
-        motor4 = new DcMotorA("motor4");//this.hardwareMap.dcMotor.get("motor1");
-        motor5 = new DcMotorA("motor5");//this.hardwareMap.dcMotor.get("motor1");
-        motor6 = new DcMotorA("motor6");//this.hardwareMap.dcMotor.get("motor1");
-        motor7 = new DcMotorA("motor7");//this.hardwareMap.dcMotor.get("motor1");
-        motor8 = new DcMotorA("motor8");//this.hardwareMap.dcMotor.get("motor1");
+        motor1 = this.hardwareMap.dcMotor.get("motor1");
+        motor2 = this.hardwareMap.dcMotor.get("motor2");
+        motor3 = this.hardwareMap.dcMotor.get("motor3");
+        motor4 = this.hardwareMap.dcMotor.get("motor4");
+        motor5 = this.hardwareMap.dcMotor.get("motor5");
+        motor6 = this.hardwareMap.dcMotor.get("motor6");
+        motor7 = this.hardwareMap.dcMotor.get("motor7");
+        motor8 = this.hardwareMap.dcMotor.get("motor8");
     }
 
     /*

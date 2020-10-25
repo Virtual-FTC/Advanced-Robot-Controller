@@ -2,18 +2,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorA;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import javax.sound.sampled.Line;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name="Basic OpMode Linear")
 public class BasicOpMode_Linear extends LinearOpMode
 {
     // Declare OpMode members.
-    private DcMotorA motor1, motor2, motor3, motor4;
+    private DcMotor motor1, motor2, motor3, motor4;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -22,10 +17,10 @@ public class BasicOpMode_Linear extends LinearOpMode
     @Override
     public void runOpMode() {
 
-        motor1 = new DcMotorA("motor1");//this.hardwareMap.dcMotor.get("motor1");
-        motor2 = new DcMotorA("motor2");//this.hardwareMap.dcMotor.get("motor1");
-        motor3 = new DcMotorA("motor3");//this.hardwareMap.dcMotor.get("motor1");
-        motor4 = new DcMotorA("motor4");//this.hardwareMap.dcMotor.get("motor1");
+        motor1 = this.hardwareMap.dcMotor.get("motor1");
+        motor2 = this.hardwareMap.dcMotor.get("motor2");
+        motor3 = this.hardwareMap.dcMotor.get("motor3");
+        motor4 = this.hardwareMap.dcMotor.get("motor4");
 //        waitForStart();
 
         for(int i = 0; i < 4; i++) {

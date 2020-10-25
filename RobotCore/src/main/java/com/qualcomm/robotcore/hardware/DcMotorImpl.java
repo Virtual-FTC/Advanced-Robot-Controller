@@ -1,9 +1,18 @@
 package com.qualcomm.robotcore.hardware;
 
+import com.qualcomm.robotcore.hardware.basicwebsocket.Ros;
+import com.qualcomm.robotcore.hardware.basicwebsocket.Topic;
+import com.qualcomm.robotcore.hardware.basicwebsocket.callback.TopicCallback;
+import com.qualcomm.robotcore.hardware.basicwebsocket.messages.Message;
+import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.DcMotorInput;
 import com.qualcomm.robotcore.hardware.configuration.MotorType;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Random;
+
+import javax.json.JsonObject;
 
 /**
  * Implementation of the DcMotor interface.
@@ -40,14 +49,48 @@ public class DcMotorImpl implements DcMotor {
     private ZeroPowerBehavior zeroPowerBehavior = ZeroPowerBehavior.BRAKE;
 
 
+    public static String rosIp = "34.122.98.19";
+
+    Ros client = null;
+
+    Topic motorPub;
+    Topic motorOutputPub;
+
+    private double encoderPosition;
+
+    public void publishCmdVel(){
+        DcMotorInput dcMotorInputToSend = new DcMotorInput(power, "");
+        motorPub.publish(dcMotorInputToSend);
+    }
 
     /**
      * For internal use only.
      * @param motorType
      */
-    public DcMotorImpl(MotorType motorType){
-        MOTOR_TYPE = motorType;
-        MOTOR_CONFIGURATION_TYPE = new MotorConfigurationType(motorType);
+    public DcMotorImpl(String motorType){
+        MOTOR_TYPE = MotorType.Neverest20;
+        MOTOR_CONFIGURATION_TYPE = new MotorConfigurationType(MOTOR_TYPE);
+
+        try {
+            client = new Ros(new URI("ws://" + rosIp + ":9091"));
+            client.connect();
+        } catch (URISyntaxException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        motorPub = new Topic(client, "/unity/" + motorType + "/input", "ftc_msgs/DcMotorInput");
+        DcMotorInput toSend = new DcMotorInput(power, "");
+        motorPub.publish(toSend);
+
+        motorOutputPub = new Topic(client, "/unity/" + motorType + "/output", "ftc_msgs/DcMotorOutput");
+        motorOutputPub.subscribe(new TopicCallback() {
+            @Override
+            public void handleMessage(Message message) {
+                JsonObject data = message.toJsonObject();
+                if(data.getJsonNumber("encoder_data").doubleValue() != 0) {
+                    encoderPosition = data.getJsonNumber("encoder_data").doubleValue();
+                }
+            }
+        });
     }
 
     /**
@@ -72,7 +115,9 @@ public class DcMotorImpl implements DcMotor {
      * Set logical direction
      * @param direction the direction to set for this motor
      */
-    public synchronized void setDirection(Direction direction){ this.direction = direction; }
+    public synchronized void setDirection(Direction direction){
+        this.direction = direction;
+    }
 
     /**
      * Get logical direction
@@ -91,10 +136,8 @@ public class DcMotorImpl implements DcMotor {
      * @param power the new power level of the motor, a value in the interval [-1.0, 1.0]
      */
     public synchronized void setPower(double power){
-        this.power = Math.max(-1, Math.min(1, power));
-
-
-
+        this.power = direction == Direction.REVERSE ? -power : power;
+        publishCmdVel();
     }
 
     /**
@@ -108,9 +151,7 @@ public class DcMotorImpl implements DcMotor {
      * @return number of encoder ticks
      */
     public synchronized int getCurrentPosition(){
-        int result = (int)Math.floor(actualPosition - encoderBasePosition);
-        return direction == Direction.FORWARD && MOTOR_TYPE.REVERSED ||
-                direction == Direction.REVERSE && !MOTOR_TYPE.REVERSED ? -result : result;
+        return (int) (encoderPosition - encoderBasePosition);
     }
 
     /**
@@ -210,5 +251,4 @@ public class DcMotorImpl implements DcMotor {
     public MotorConfigurationType getMotorType(){
         return MOTOR_CONFIGURATION_TYPE;
     }
-
 }
