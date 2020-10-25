@@ -54,7 +54,7 @@ public class BasicOpMode_Iterative extends OpMode
         bL_power = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * Math.sin(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4) - gamepad1.right_stick_x / 2;
         bR_power = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * Math.cos(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4) + gamepad1.right_stick_x / 2;
 
-        motor1.setPower(-movementPower * fL_power + 1);
+        motor1.setPower(-movementPower * fL_power);
         motor2.setPower(-movementPower * fR_power);
         motor3.setPower(-movementPower * bL_power);
         motor4.setPower(-movementPower * bR_power);
