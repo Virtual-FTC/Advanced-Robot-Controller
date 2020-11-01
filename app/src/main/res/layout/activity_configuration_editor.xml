@@ -96,13 +96,126 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="75dp">
+            android:id="@+id/motor1_layout"
+            android:layout_height="62.5dp">
 
             <EditText
                 android:layout_width="175dp"
                 android:layout_height="wrap_content"
-                android:text="frontLeft"
-                android:hint="motor1"
+                android:hint="frontLeft"
+                android:id="@+id/motor1"
+                android:layout_centerVertical="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:id="@+id/motor2_layout"
+            android:layout_below="@id/motor1_layout"
+            android:layout_height="62.5dp">
+
+            <EditText
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:hint="frontRight"
+                android:id="@+id/motor2"
+                android:layout_centerVertical="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:id="@+id/motor3_layout"
+            android:layout_below="@id/motor2_layout"
+            android:layout_height="62.5dp">
+
+            <EditText
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:hint="backLeft"
+                android:id="@+id/motor3"
+                android:layout_centerVertical="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:id="@+id/motor4_layout"
+            android:layout_below="@id/motor3_layout"
+            android:layout_height="62.5dp">
+
+            <EditText
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:hint="backRight"
+                android:id="@+id/motor4"
+                android:layout_centerVertical="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:id="@+id/motor5_layout"
+            android:layout_below="@id/motor4_layout"
+            android:layout_height="62.5dp">
+
+            <EditText
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:hint="collection"
+                android:id="@+id/motor5"
+                android:layout_centerVertical="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:id="@+id/motor6_layout"
+            android:layout_below="@id/motor5_layout"
+            android:layout_height="62.5dp">
+
+            <EditText
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:hint="conveyor"
+                android:id="@+id/motor6"
+                android:layout_centerVertical="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:id="@+id/motor7_layout"
+            android:layout_below="@id/motor6_layout"
+            android:layout_height="62.5dp">
+
+            <EditText
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:hint="leftLauncher"
+                android:id="@+id/motor7"
+                android:layout_centerVertical="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:id="@+id/motor8_layout"
+            android:layout_below="@id/motor7_layout"
+            android:layout_height="62.5dp">
+
+            <EditText
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:hint="rightLauncher"
+                android:id="@+id/motor8"
                 android:layout_centerVertical="true"
                 />
 

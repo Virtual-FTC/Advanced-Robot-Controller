@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,7 +69,7 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
             fis.close();
             JSONObject allConfigs = new JSONObject(sb.toString());
 
-            for(int i = 0; i < allConfigs.getJSONArray("configurations").length(); i++) {
+            for (int i = 0; i < allConfigs.getJSONArray("configurations").length(); i++) {
                 existingConfigurationNames.add(allConfigs.getJSONArray("configurations").get(i).toString());
             }
         } catch (Exception e) {
@@ -90,6 +91,14 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
 
     @Override
     public void createNewConfiguration(String name) {
+
+        for (int i = 0; i < existingConfigurationNames.size(); i++) {
+            if (existingConfigurationNames.get(i).equals(name) || existingConfigurationNames.get(i).equals("configurations") || existingConfigurationNames.get(i).equals("activeConfigs")) {
+                Toast.makeText(this, "Configuration with same name already exists.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
         existingConfigurationNames.add(name);
         try {
             JSONObject jsonObject = new JSONObject();
@@ -103,6 +112,7 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
 
         }
         adapter.notifyDataSetChanged();
+
     }
 
     public void writeFileOnInternalStorage(Context context, String fileName, String fileContent) {
@@ -143,6 +153,9 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
                 viewHolder.editConfiguration.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        Intent intent = new Intent(ConfigurationActivity.this, ConfigurationEditor.class);
+                        intent.putExtra("CONFIGURATION_NAME", allConfigurationNames.get(position));
+                        startActivity(intent);
                     }
                 });
 
@@ -163,6 +176,7 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
                             activeConfigurationNameLabel.setText(activeConfigurationName);
                             writeFileOnInternalStorage(getContext(), "activeConfig.txt", activeConfigurationName);
                         }
+                        String configName = allConfigurationNames.get(position);
                         allConfigurationNames.remove(position);
                         try {
                             JSONObject jsonObject = new JSONObject();
@@ -176,6 +190,16 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
 
                         }
                         notifyDataSetChanged();
+                        File fileToDelete = new File(ConfigurationActivity.this.getFilesDir() + "/" + configName + ".txt");
+                        if (fileToDelete.exists()) {
+                            if (fileToDelete.delete()) {
+                                Toast.makeText(ConfigurationActivity.this, configName + " Successfully Deleted", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(ConfigurationActivity.this, "Unsuccessful Deletion", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(ConfigurationActivity.this, configName + " Successfully Deleted", Toast.LENGTH_SHORT).show();
+                        }
 
                     }
                 });
