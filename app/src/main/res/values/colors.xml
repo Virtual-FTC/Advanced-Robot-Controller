@@ -8,5 +8,6 @@
     <color name="redMain">#D60000</color>
     <color name="redSuperLight">#FF0000</color>
     <color name="border">#242424</color>
+    <color name="borderLight">#505050</color>
 
 </resources>

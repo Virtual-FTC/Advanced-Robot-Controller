@@ -34,7 +34,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:background="@android:color/white"
+        android:background="@color/border"
         android:layout_height="wrap_content"
         android:id="@+id/newButtonArea"
         android:layout_below="@id/activeConfigBar">
@@ -45,6 +45,7 @@
             android:text="New"
             android:id="@+id/newConfigurationButton"
             android:layout_marginLeft="10dp"
+            android:backgroundTint="@color/borderLight"
             />
 
         <Button
@@ -53,6 +54,7 @@
             android:text="Done"
             android:id="@+id/doneButtonConfigurationMenu"
             android:layout_alignParentRight="true"
+            android:backgroundTint="@color/borderLight"
             android:layout_marginRight="10dp"
             />
 
@@ -68,7 +70,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:background="@android:color/white"
+        android:background="#353535"
         android:layout_height="wrap_content"
         android:id="@+id/configArea"
         android:layout_below="@id/newButtonArea">
@@ -77,7 +79,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Available Configurations:"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"/>
 
@@ -87,7 +90,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/configArea"
-        android:background="@android:color/white">
+        android:background="@color/border">
 
         <ListView
             android:layout_width="match_parent"
@@ -99,7 +102,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_alignParentBottom="true"
-            android:background="@android:color/white"
+            android:background="@color/border"
             android:layout_centerHorizontal="true"
             android:layout_height="50dp">
 
@@ -113,6 +116,7 @@
             <Button
                 android:layout_width="220dp"
                 android:layout_height="40dp"
+                android:backgroundTint="@color/borderLight"
                 android:text="Configure from Template"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"

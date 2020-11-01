@@ -161,8 +161,20 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
                         if (allConfigurationNames.get(position).equals(activeConfigurationName)) {
                             activeConfigurationName = "";
                             activeConfigurationNameLabel.setText(activeConfigurationName);
+                            writeFileOnInternalStorage(getContext(), "activeConfig.txt", activeConfigurationName);
                         }
                         allConfigurationNames.remove(position);
+                        try {
+                            JSONObject jsonObject = new JSONObject();
+                            JSONArray jsonArray = new JSONArray();
+                            for (int i = 0; i < existingConfigurationNames.size(); i++) {
+                                jsonArray.put(existingConfigurationNames.get(i));
+                            }
+                            jsonObject.put("configurations", jsonArray);
+                            writeFileOnInternalStorage(ConfigurationActivity.this, "configurations.txt", jsonObject.toString());
+                        } catch (Exception ignore) {
+
+                        }
                         notifyDataSetChanged();
 
                     }
