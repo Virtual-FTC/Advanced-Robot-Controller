@@ -55,6 +55,52 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
         });
         existingConfigurationNames = new ArrayList<>();
 
+        Button configureFromTemplateButton = findViewById(R.id.configurationTemplatesButton);
+        configureFromTemplateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                adapter.notifyDataSetChanged();
+                for (int i = 0; i < existingConfigurationNames.size(); i++) {
+                    if (existingConfigurationNames.get(i).equals("defaultRobot")) {
+                        Toast.makeText(ConfigurationActivity.this, "Default configuration already exists.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
+                existingConfigurationNames.add("defaultRobot");
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    JSONArray jsonArray = new JSONArray();
+                    for (int i = 0; i < existingConfigurationNames.size(); i++) {
+                        jsonArray.put(existingConfigurationNames.get(i));
+                    }
+                    jsonObject.put("configurations", jsonArray);
+                    writeFileOnInternalStorage(ConfigurationActivity.this, "configurations.txt", jsonObject.toString());
+                } catch (Exception ignore) {
+
+                }
+                adapter.notifyDataSetChanged();
+
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    JSONArray jsonArray = new JSONArray();
+
+                    jsonArray.put("motor1");
+                    jsonArray.put("motor2");
+                    jsonArray.put("motor3");
+                    jsonArray.put("motor4");
+                    jsonArray.put("motor5");
+                    jsonArray.put("motor6");
+                    jsonArray.put("motor7");
+                    jsonArray.put("motor8");
+
+                    jsonObject.put("devices", jsonArray);
+                    writeFileOnInternalStorage(ConfigurationActivity.this, "defaultRobot" + ".txt", jsonObject.toString());
+                } catch (Exception ignore) {
+                }
+            }
+        });
+
         try {
             StringBuilder sb = new StringBuilder();
             FileInputStream fis = new FileInputStream(new File(this.getFilesDir() + "/" + "configurations.txt"));
