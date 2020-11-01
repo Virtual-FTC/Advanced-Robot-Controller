@@ -22,11 +22,18 @@
             android:layout_marginTop="10dp"/>
 
         <RelativeLayout
-            android:layout_width="100dp"
+            android:layout_width="200dp"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true">
+            android:layout_alignParentEnd="true">
 
-
+            <androidx.appcompat.widget.ActionMenuView
+                android:id="@+id/toolbar_bottom"
+                android:layout_width="56dp"
+                style="@style/TextAppearance.AppCompat.Large"
+                android:layout_height="?android:attr/actionBarSize"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"/>
 
             <ImageView
                 android:layout_width="50dp"
@@ -34,6 +41,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="0dp"
                 android:id="@+id/gamepadImage"
+                android:layout_marginEnd="100dp"
                 android:background="@drawable/ic_baseline_videogame_asset_24"/>
 
             <TextView
@@ -44,7 +52,11 @@
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="10dp"
+                android:id="@+id/userLabel"
                 android:layout_marginTop="10dp"/>
+
+
+
 
         </RelativeLayout>
     </RelativeLayout>

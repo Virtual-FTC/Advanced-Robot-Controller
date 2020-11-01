@@ -1,18 +1,29 @@
 package com.example.webrosrobotcontroller;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.ActionMenuView;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,9 +31,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import dalvik.system.DexFile;
 
@@ -31,11 +45,12 @@ public class MainActivity extends AppCompatActivity {
     private boolean canUpdateGamepad = false;
     ArrayList<String> allClasses = new ArrayList<>();
     Spinner opModeSelector;
-    Boolean isSeletedProgramLinearOpMode = null;
+    Boolean selectedProgramIsLinearOpMode = null;
     Thread opModeThread;
     Thread gamepadCheckThread;
     ProgressBar progressBar;
     EditText robotVM_IPAddress;
+    String activeConfigurationName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +61,46 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.loadingSign);
         progressBar.setVisibility(View.INVISIBLE);
         robotVM_IPAddress = findViewById(R.id.robotVM_IPAddress);
+
+        try {
+            String yourFilePath = this.getFilesDir() + "/" + "activeConfig.txt";
+            File file = new File( yourFilePath );
+            FileInputStream fin = new FileInputStream(file);
+            int c;
+            String temp="";
+            while( (c = fin.read()) != -1){
+                temp = temp + (char)c;
+            }
+            fin.close();
+            activeConfigurationName = temp;
+        } catch (Exception e) {
+            e.printStackTrace();
+            activeConfigurationName = "No Config Set";
+        }
+
+        ActionMenuView bottomBar = findViewById(R.id.toolbar_bottom);
+
+        Menu bottomMenu = bottomBar.getMenu();
+
+        getMenuInflater().inflate(R.menu.menu, bottomMenu);
+
+        bottomMenu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(MainActivity.this, ConfigurationActivity.class);
+                intent.putExtra("ACTIVE_CONFIGURATION_NAME", activeConfigurationName);
+                startActivity(intent);
+                return onOptionsItemSelected(item);
+            }
+        });
+
+
         final Button initStartButton = (Button) findViewById(R.id.initStartButton);
         initStartButton.setTag(0);
         initStartButton.setText("INIT");
         initStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                DcMotorA.rosIp = robotVM_IPAddress.getText().toString();
                 final int status = (Integer) v.getTag();
                 if (status == 0) {
                     try {
@@ -69,12 +117,12 @@ public class MainActivity extends AppCompatActivity {
                 } else if (status == 1) {
                     initStartButton.setText("STOP");
                     v.setTag(2); //pause
-                    launchOpModeThread(isSeletedProgramLinearOpMode);
+                    launchOpModeThread(selectedProgramIsLinearOpMode);
                 } else if (status == 2) {
                     opModeThread.interrupt();
                     initStartButton.setText("INIT");
                     v.setTag(0); //pause
-                    isSeletedProgramLinearOpMode = null;
+                    selectedProgramIsLinearOpMode = null;
                     opModeThread = null;
 
                 }
@@ -104,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                     LinearOpMode linearOpMode = ((LinearOpMode) opMode);
-                    isSeletedProgramLinearOpMode = true;
+                    selectedProgramIsLinearOpMode = true;
                     canUpdateGamepad = true;
                     enableProgramStart();
                 } catch (Exception ignore) {
@@ -112,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         opMode.init();
                         canUpdateGamepad = true;
-                        isSeletedProgramLinearOpMode = false;
+                        selectedProgramIsLinearOpMode = false;
                         enableProgramStart();
                     } catch (Exception e) {
                         MainActivity.this.runOnUiThread(new Runnable() {
@@ -124,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                                 initStartButton.setText("INIT");
                                 progressBar.setVisibility(View.INVISIBLE);
                                 canUpdateGamepad = false;
-                                isSeletedProgramLinearOpMode = null;
+                                selectedProgramIsLinearOpMode = null;
                             }
                         });
                     }
@@ -257,7 +305,6 @@ public class MainActivity extends AppCompatActivity {
 //            });
         }
     }
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
