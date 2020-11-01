@@ -62,21 +62,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
         robotVM_IPAddress = findViewById(R.id.robotVM_IPAddress);
 
-        try {
-            String yourFilePath = this.getFilesDir() + "/" + "activeConfig.txt";
-            File file = new File( yourFilePath );
-            FileInputStream fin = new FileInputStream(file);
-            int c;
-            String temp="";
-            while( (c = fin.read()) != -1){
-                temp = temp + (char)c;
-            }
-            fin.close();
-            activeConfigurationName = temp;
-        } catch (Exception e) {
-            e.printStackTrace();
-            activeConfigurationName = "No Config Set";
-        }
+
 
         ActionMenuView bottomBar = findViewById(R.id.toolbar_bottom);
 
@@ -87,6 +73,21 @@ public class MainActivity extends AppCompatActivity {
         bottomMenu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                try {
+                    String yourFilePath = MainActivity.this.getFilesDir() + "/" + "activeConfig.txt";
+                    File file = new File(yourFilePath);
+                    FileInputStream fin = new FileInputStream(file);
+                    int c;
+                    String temp = "";
+                    while ((c = fin.read()) != -1) {
+                        temp = temp + (char) c;
+                    }
+                    fin.close();
+                    activeConfigurationName = temp;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    activeConfigurationName = "No Config Set";
+                }
                 Intent intent = new Intent(MainActivity.this, ConfigurationActivity.class);
                 intent.putExtra("ACTIVE_CONFIGURATION_NAME", activeConfigurationName);
                 startActivity(intent);
