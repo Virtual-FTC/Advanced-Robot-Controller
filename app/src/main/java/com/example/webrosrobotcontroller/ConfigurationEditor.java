@@ -92,6 +92,45 @@ public class ConfigurationEditor extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(saveConfiguration()) {
+                    if(currentConfig.equals(getIntent().getStringExtra("ACTIVE_CONFIGURATION_NAME"))) {
+                        try {
+                            StringBuilder sb = new StringBuilder();
+                            FileInputStream fis = new FileInputStream(new File(getFilesDir() + "/" + getIntent().getStringExtra("ACTIVE_CONFIGURATION_NAME") + ".txt"));
+                            InputStreamReader isr = new InputStreamReader(fis);
+                            BufferedReader buff = new BufferedReader(isr);
+
+                            String line;
+                            while ((line = buff.readLine()) != null) {
+                                sb.append(line + "\n");
+                            }
+
+                            fis.close();
+                            JSONObject allConfigs = new JSONObject(sb.toString());
+
+                            String motor1Name = allConfigs.getJSONArray("devices").get(0).toString();
+                            String motor2Name = allConfigs.getJSONArray("devices").get(1).toString();
+                            String motor3Name = allConfigs.getJSONArray("devices").get(2).toString();
+                            String motor4Name = allConfigs.getJSONArray("devices").get(3).toString();
+                            String motor5Name = allConfigs.getJSONArray("devices").get(4).toString();
+                            String motor6Name = allConfigs.getJSONArray("devices").get(5).toString();
+                            String motor7Name = allConfigs.getJSONArray("devices").get(6).toString();
+                            String motor8Name = allConfigs.getJSONArray("devices").get(7).toString();
+                            String newActivityConfigFile = "motors: [\n" +
+                                    "  {frc: \"" + motor1Name + "\", sim: \"motor1\"},\n" +
+                                    "  {frc: \"" + motor2Name + "\", sim: \"motor2\"},\n" +
+                                    "  {frc: \""+ motor3Name +"\", sim: \"motor3\"},\n" +
+                                    "  {frc: \""+ motor4Name +"\", sim: \"motor4\"},\n" +
+                                    "  {frc: \""+ motor5Name +"\", sim: \"motor5\"},\n" +
+                                    "  {frc: \""+ motor6Name +"\", sim: \"motor6\"},\n" +
+                                    "  {frc: \""+ motor7Name +"\", sim: \"motor7\"},\n" +
+                                    "  {frc: \""+ motor8Name +"\", sim: \"motor8\"},\n" +
+                                    "]";
+
+                            writeFileOnInternalStorage(ConfigurationEditor.this, "activeConfiguration.yaml", newActivityConfigFile);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                     finish();
                 }
             }
