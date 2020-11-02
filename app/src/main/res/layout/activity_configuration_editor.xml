@@ -7,83 +7,79 @@
     tools:context=".ConfigurationActivity">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:background="@color/redDark"
         android:id="@+id/activeConfigBar"
-        android:layout_height="20dp">
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="@color/redDark">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Active Configuration:"
             android:layout_marginLeft="10dp"
-            android:textColor="@android:color/white"
-            />
+            android:text="Active Configuration:"
+            android:textColor="@android:color/white" />
 
         <TextView
+            android:id="@+id/activeConfigurationNameLabelEdit"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="robot"
-            android:id="@+id/activeConfigurationNameLabel"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
-            android:textColor="@android:color/white"
-            />
+            android:text="robot"
+            android:textColor="@android:color/white" />
 
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:background="@color/border"
-        android:layout_height="wrap_content"
         android:id="@+id/newButtonArea"
-        android:layout_below="@id/activeConfigBar">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activeConfigBar"
+        android:background="@color/border">
 
         <Button
+            android:id="@+id/saveConfigurationButton"
             android:layout_width="65dp"
             android:layout_height="wrap_content"
-            android:text="Save"
-            android:id="@+id/saveConfigurationButton"
-            android:backgroundTint="@color/borderLight"
             android:layout_marginLeft="10dp"
-            />
+            android:backgroundTint="@color/borderLight"
+            android:text="Save" />
 
         <Button
+            android:id="@+id/cancelEditingConfigurationButton"
             android:layout_width="85dp"
             android:layout_height="wrap_content"
-            android:text="Cancel"
-            android:id="@+id/cancelEditingConfigurationButton"
+            android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/saveConfigurationButton"
             android:backgroundTint="@color/borderLight"
 
-            android:layout_marginLeft="10dp"
-            />
+            android:text="Cancel" />
 
         <RelativeLayout
             android:layout_width="match_parent"
+            android:layout_height="2dp"
             android:layout_below="@id/saveConfigurationButton"
-            android:background="@color/redMain"
             android:layout_centerHorizontal="true"
-            android:layout_height="2dp">
+            android:background="@color/redMain">
 
         </RelativeLayout>
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:background="#353535"
-        android:layout_height="wrap_content"
         android:id="@+id/configArea"
-        android:layout_below="@id/newButtonArea">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/newButtonArea"
+        android:background="#353535">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Available Hardware Devices:"
-            android:textColor="@android:color/white"
-            android:layout_marginLeft="10dp"
             android:layout_centerVertical="true"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:text="Available Hardware Devices:"
+            android:textColor="@android:color/white" />
 
     </RelativeLayout>
 
@@ -91,140 +87,234 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/configArea"
-        android:padding="16dp"
-        android:background="@color/border">
+        android:background="@color/border"
+        android:padding="16dp">
 
         <RelativeLayout
+            android:id="@+id/labels_layout"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Port"
+                android:id="@+id/portLabel"
+                android:layout_marginLeft="1dp"
+
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Motor Name"
+                android:layout_marginLeft="14dp"
+                android:layout_toRightOf="@id/portLabel"
+                android:textSize="20dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
             android:id="@+id/motor1_layout"
+            android:layout_below="@id/labels_layout"
+            android:layout_width="match_parent"
             android:layout_height="62.5dp">
 
             <EditText
-                android:layout_width="175dp"
-                android:layout_height="wrap_content"
-                android:hint="frontLeft"
                 android:id="@+id/motor1"
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                />
+                android:layout_marginLeft="50dp"
+                android:hint="frontLeft" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="0"
+                android:textColor="@android:color/white"
+                android:textSize="35dp" />
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/motor2_layout"
-            android:layout_below="@id/motor1_layout"
-            android:layout_height="62.5dp">
+            android:layout_width="match_parent"
+            android:layout_height="62.5dp"
+            android:layout_below="@id/motor1_layout">
 
             <EditText
-                android:layout_width="175dp"
-                android:layout_height="wrap_content"
-                android:hint="frontRight"
                 android:id="@+id/motor2"
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                />
+                android:layout_marginLeft="50dp"
+                android:hint="frontRight" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="1"
+                android:textColor="@android:color/white"
+                android:textSize="35dp" />
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/motor3_layout"
-            android:layout_below="@id/motor2_layout"
-            android:layout_height="62.5dp">
+            android:layout_width="match_parent"
+            android:layout_height="62.5dp"
+            android:layout_below="@id/motor2_layout">
 
             <EditText
-                android:layout_width="175dp"
-                android:layout_height="wrap_content"
-                android:hint="backLeft"
                 android:id="@+id/motor3"
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                />
+                android:layout_marginLeft="50dp"
+                android:hint="backLeft" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="2"
+                android:textColor="@android:color/white"
+                android:textSize="35dp" />
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/motor4_layout"
-            android:layout_below="@id/motor3_layout"
-            android:layout_height="62.5dp">
+            android:layout_width="match_parent"
+            android:layout_height="62.5dp"
+            android:layout_below="@id/motor3_layout">
 
             <EditText
-                android:layout_width="175dp"
-                android:layout_height="wrap_content"
-                android:hint="backRight"
                 android:id="@+id/motor4"
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                />
+                android:layout_marginLeft="50dp"
+                android:hint="backRight" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="3"
+                android:textColor="@android:color/white"
+                android:textSize="35dp" />
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/motor5_layout"
-            android:layout_below="@id/motor4_layout"
-            android:layout_height="62.5dp">
+            android:layout_width="match_parent"
+            android:layout_height="62.5dp"
+            android:layout_below="@id/motor4_layout">
 
             <EditText
-                android:layout_width="175dp"
-                android:layout_height="wrap_content"
-                android:hint="collection"
                 android:id="@+id/motor5"
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
                 android:layout_centerVertical="true"
-                />
+                android:hint="collection" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="4"
+                android:textColor="@android:color/white"
+                android:textSize="35dp" />
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/motor6_layout"
-            android:layout_below="@id/motor5_layout"
-            android:layout_height="62.5dp">
+            android:layout_width="match_parent"
+            android:layout_height="62.5dp"
+            android:layout_below="@id/motor5_layout">
 
             <EditText
-                android:layout_width="175dp"
-                android:layout_height="wrap_content"
-                android:hint="conveyor"
                 android:id="@+id/motor6"
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
                 android:layout_centerVertical="true"
-                />
+                android:hint="conveyor" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="5"
+                android:textColor="@android:color/white"
+                android:textSize="35dp" />
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/motor7_layout"
-            android:layout_below="@id/motor6_layout"
-            android:layout_height="62.5dp">
+            android:layout_width="match_parent"
+            android:layout_height="62.5dp"
+            android:layout_below="@id/motor6_layout">
 
             <EditText
+                android:id="@+id/motor7"
                 android:layout_width="175dp"
                 android:layout_height="wrap_content"
-                android:hint="leftLauncher"
-                android:id="@+id/motor7"
+                android:layout_marginLeft="50dp"
                 android:layout_centerVertical="true"
-                />
+                android:hint="leftLauncher" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="6"
+                android:textColor="@android:color/white"
+                android:textSize="35dp" />
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/motor8_layout"
-            android:layout_below="@id/motor7_layout"
-            android:layout_height="62.5dp">
+            android:layout_width="match_parent"
+            android:layout_height="62.5dp"
+            android:layout_below="@id/motor7_layout">
 
             <EditText
+                android:id="@+id/motor8"
                 android:layout_width="175dp"
                 android:layout_height="wrap_content"
-                android:hint="rightLauncher"
-                android:id="@+id/motor8"
+                android:layout_marginLeft="50dp"
                 android:layout_centerVertical="true"
-                />
+                android:hint="rightLauncher" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="7"
+                android:textColor="@android:color/white"
+                android:textSize="35dp" />
 
         </RelativeLayout>
 
     </RelativeLayout>
-
-
-
 
 
 </RelativeLayout>

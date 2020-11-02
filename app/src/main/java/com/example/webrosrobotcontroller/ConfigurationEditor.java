@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -40,6 +41,8 @@ public class ConfigurationEditor extends AppCompatActivity {
         setContentView(R.layout.activity_configuration_editor);
 
         currentConfig = getIntent().getStringExtra("CONFIGURATION_NAME");
+        TextView activeConfigName = findViewById(R.id.activeConfigurationNameLabelEdit);
+        activeConfigName.setText(getIntent().getStringExtra("ACTIVE_CONFIGURATION_NAME"));
         motor1 = findViewById(R.id.motor1);
         motor2 = findViewById(R.id.motor2);
         motor3 = findViewById(R.id.motor3);

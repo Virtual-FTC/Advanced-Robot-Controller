@@ -62,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
         robotVM_IPAddress = findViewById(R.id.robotVM_IPAddress);
 
-
-
         ActionMenuView bottomBar = findViewById(R.id.toolbar_bottom);
 
         Menu bottomMenu = bottomBar.getMenu();
@@ -120,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
                     v.setTag(2); //pause
                     launchOpModeThread(selectedProgramIsLinearOpMode);
                 } else if (status == 2) {
+                    opMode.stop();
                     opModeThread.interrupt();
                     initStartButton.setText("INIT");
                     v.setTag(0); //pause

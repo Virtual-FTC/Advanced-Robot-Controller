@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,6 +27,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ConfigurationActivity extends AppCompatActivity implements NewConfigurationDialog.NewConfigurationDialogListener {
@@ -98,6 +100,7 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
                     writeFileOnInternalStorage(ConfigurationActivity.this, "defaultRobot" + ".txt", jsonObject.toString());
                 } catch (Exception ignore) {
                 }
+
             }
         });
 
@@ -201,6 +204,7 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
                     public void onClick(View view) {
                         Intent intent = new Intent(ConfigurationActivity.this, ConfigurationEditor.class);
                         intent.putExtra("CONFIGURATION_NAME", allConfigurationNames.get(position));
+                        intent.putExtra("ACTIVE_CONFIGURATION_NAME", activeConfigurationName);
                         startActivity(intent);
                     }
                 });
@@ -211,6 +215,45 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
                         activeConfigurationName = allConfigurationNames.get(position);
                         activeConfigurationNameLabel.setText(activeConfigurationName);
                         writeFileOnInternalStorage(getContext(), "activeConfig.txt", activeConfigurationName);
+                        try {
+                            StringBuilder sb = new StringBuilder();
+                            FileInputStream fis = new FileInputStream(new File(getFilesDir() + "/" + activeConfigurationName + ".txt"));
+                            InputStreamReader isr = new InputStreamReader(fis);
+                            BufferedReader buff = new BufferedReader(isr);
+
+                            String line;
+                            while ((line = buff.readLine()) != null) {
+                                sb.append(line + "\n");
+                            }
+
+                            fis.close();
+                            JSONObject allConfigs = new JSONObject(sb.toString());
+
+                            String motor1Name = allConfigs.getJSONArray("devices").get(0).toString();
+                            String motor2Name = allConfigs.getJSONArray("devices").get(1).toString();
+                            String motor3Name = allConfigs.getJSONArray("devices").get(2).toString();
+                            String motor4Name = allConfigs.getJSONArray("devices").get(3).toString();
+                            String motor5Name = allConfigs.getJSONArray("devices").get(4).toString();
+                            String motor6Name = allConfigs.getJSONArray("devices").get(5).toString();
+                            String motor7Name = allConfigs.getJSONArray("devices").get(6).toString();
+                            String motor8Name = allConfigs.getJSONArray("devices").get(7).toString();
+                            String newActivityConfigFile = "motors: [\n" +
+                                    "  {frc: \"" + motor1Name + "\", sim: \"motor1\"},\n" +
+                                    "  {frc: \"" + motor2Name + "\", sim: \"motor2\"},\n" +
+                                    "  {frc: \""+ motor3Name +"\", sim: \"motor3\"},\n" +
+                                    "  {frc: \""+ motor4Name +"\", sim: \"motor4\"},\n" +
+                                    "  {frc: \""+ motor5Name +"\", sim: \"motor5\"},\n" +
+                                    "  {frc: \""+ motor6Name +"\", sim: \"motor6\"},\n" +
+                                    "  {frc: \""+ motor7Name +"\", sim: \"motor7\"},\n" +
+                                    "  {frc: \""+ motor8Name +"\", sim: \"motor8\"},\n" +
+                                    "]";
+
+                            writeFileOnInternalStorage(getContext(), "activeConfiguration.yaml", newActivityConfigFile);
+                            Toast.makeText(ConfigurationActivity.this, getFilesDir() + "/" + activeConfigurationName + ".txt", Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 });
 

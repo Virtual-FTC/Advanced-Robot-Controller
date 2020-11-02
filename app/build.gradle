@@ -29,6 +29,7 @@ dependencies {
     implementation 'org.java-websocket:Java-WebSocket:1.5.1'
     implementation 'org.glassfish:javax.json:1.0.4'
     implementation 'org.reflections:reflections:0.9.11'
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.8'
     implementation project(path: ':RobotCore')
     implementation project(path: ':TeamCode')
     testImplementation 'junit:junit:4.12'
