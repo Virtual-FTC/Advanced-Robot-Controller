@@ -249,7 +249,6 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
                                     "]";
 
                             writeFileOnInternalStorage(getContext(), "activeConfiguration.yaml", newActivityConfigFile);
-                            Toast.makeText(ConfigurationActivity.this, getFilesDir() + "/" + activeConfigurationName + ".txt", Toast.LENGTH_SHORT).show();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
