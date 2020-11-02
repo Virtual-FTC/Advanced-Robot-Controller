@@ -116,14 +116,14 @@ public class ConfigurationEditor extends AppCompatActivity {
                             String motor7Name = allConfigs.getJSONArray("devices").get(6).toString();
                             String motor8Name = allConfigs.getJSONArray("devices").get(7).toString();
                             String newActivityConfigFile = "motors: [\n" +
-                                    "  {frc: \"" + motor1Name + "\", sim: \"motor1\"},\n" +
-                                    "  {frc: \"" + motor2Name + "\", sim: \"motor2\"},\n" +
-                                    "  {frc: \""+ motor3Name +"\", sim: \"motor3\"},\n" +
-                                    "  {frc: \""+ motor4Name +"\", sim: \"motor4\"},\n" +
-                                    "  {frc: \""+ motor5Name +"\", sim: \"motor5\"},\n" +
-                                    "  {frc: \""+ motor6Name +"\", sim: \"motor6\"},\n" +
-                                    "  {frc: \""+ motor7Name +"\", sim: \"motor7\"},\n" +
-                                    "  {frc: \""+ motor8Name +"\", sim: \"motor8\"},\n" +
+                                    "  {frc: \"frontLeft\", sim: \"" + motor1Name + "\"},\n" +
+                                    "  {frc: \"frontRight\", sim: \"" + motor2Name + "\"},\n" +
+                                    "  {frc: \"backLeft\", sim: \"" + motor3Name + "\"},\n" +
+                                    "  {frc: \"backRight\", sim: \"" + motor4Name + "\"},\n" +
+                                    "  {frc: \"intake\", sim: \"" + motor5Name + "\"},\n" +
+                                    "  {frc: \"hopper\", sim: \"" + motor6Name + "\"},\n" +
+                                    "  {frc: \"leftShooter\", sim: \"" + motor7Name + "\"},\n" +
+                                    "  {frc: \"rightShooter\", sim: \"" + motor8Name + "\"},\n" +
                                     "]";
 
                             writeFileOnInternalStorage(ConfigurationEditor.this, "activeConfiguration.yaml", newActivityConfigFile);
