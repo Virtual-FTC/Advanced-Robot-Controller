@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Basic: Iterative OpMode", group="TeleOp")
-public class BasicOpMode_Iterative extends OpMode
+@TeleOp(name="Basic: Iterative OpMode Shooter Bot", group="TeleOp")
+public class BasicOpMode_Iterative_SHOOTERBOT extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
