@@ -10,7 +10,7 @@ public class BasicOpMode_Iterative_SCOOPBOT extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor motor1, motor2, motor3, motor4, motor5, motor6, motor7, motor8, motor9;
+    private DcMotor motor1, motor2, motor3, motor4, motor5, motor6, motor7;
     double leftPower, rightPower;
 
     /*
@@ -26,8 +26,6 @@ public class BasicOpMode_Iterative_SCOOPBOT extends OpMode
         motor5 = this.hardwareMap.dcMotor.get("motor5");
         motor6 = this.hardwareMap.dcMotor.get("motor6");
         motor7 = this.hardwareMap.dcMotor.get("motor7");
-        motor8 = this.hardwareMap.dcMotor.get("motor8");
-        motor9 = this.hardwareMap.dcMotor.get("motor9");
     }
 
     /*
@@ -55,21 +53,23 @@ public class BasicOpMode_Iterative_SCOOPBOT extends OpMode
 
         motor1.setPower(leftPower);
         motor2.setPower(rightPower);
-        motor3.setPower(leftPower);
-        motor4.setPower(rightPower);
-        motor5.setPower(leftPower);
-        motor6.setPower(rightPower);
-
         if(gamepad1.a) {
-            motor7.setPower(1.0);
+            motor3.setPower(1.0);
+            motor4.setPower(1.0);
         } else if(gamepad1.b) {
-            motor8.setPower(1.0);
+            motor5.setPower(1.0);
         } else if(gamepad1.y) {
-            motor9.setPower(1.0);
+            motor6.setPower(1.0);
+            motor7.setPower(1.0);
+        } else if(gamepad1.x) {
+            motor6.setPower(-1.0);
+            motor7.setPower(-1.0);
         } else {
+            motor3.setPower(0.0);
+            motor4.setPower(0.0);
+            motor5.setPower(0.0);
+            motor6.setPower(0.0);
             motor7.setPower(0.0);
-            motor8.setPower(0.0);
-            motor9.setPower(0.0);
         }
     }
 
