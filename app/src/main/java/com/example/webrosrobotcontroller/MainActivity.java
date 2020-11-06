@@ -114,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final int status = (Integer) v.getTag();
                 if (status == 0) {
+                    DcMotorImpl.rosIp = robotVM_IPAddress.getText().toString();
+                    rosIp = robotVM_IPAddress.getText().toString();
                     try {
                         Class opModeClass = Class.forName("org.firstinspires.ftc.teamcode." + opModeSelector.getSelectedItem().toString());//opModeSelector.getSelectedItem().toString().getClass();
                         opMode = (OpMode) opModeClass.newInstance();
