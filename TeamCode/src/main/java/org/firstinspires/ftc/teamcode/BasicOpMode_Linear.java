@@ -28,7 +28,6 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
         //Square movement example program
 
-
         moveForwardAndTurn();
         moveForwardAndTurn();
         moveForwardAndTurn();

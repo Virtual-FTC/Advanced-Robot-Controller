@@ -37,7 +37,6 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
     ArrayList<String> existingConfigurationNames;
     ListView listView;
     ConfigurationListAdapter adapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -269,8 +268,8 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
                         try {
                             JSONObject jsonObject = new JSONObject();
                             JSONArray jsonArray = new JSONArray();
-                            for (int i = 0; i < existingConfigurationNames.size(); i++) {
-                                jsonArray.put(existingConfigurationNames.get(i));
+                            for (int i = 0; i < allConfigurationNames.size(); i++) {
+                                jsonArray.put(allConfigurationNames.get(i));
                             }
                             jsonObject.put("configurations", jsonArray);
                             writeFileOnInternalStorage(ConfigurationActivity.this, "configurations.txt", jsonObject.toString());

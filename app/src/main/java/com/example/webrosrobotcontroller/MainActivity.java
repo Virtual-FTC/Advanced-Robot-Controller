@@ -30,10 +30,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.basicwebsocket.Ros;
+import com.qualcomm.robotcore.hardware.basicwebsocket.Topic;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -52,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
     EditText robotVM_IPAddress;
     String activeConfigurationName = "";
 
+    public static String rosIp = "34.122.98.19";
+    Ros client = null;
+    Topic configPub;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,11 +77,11 @@ public class MainActivity extends AppCompatActivity {
 
         ActionMenuView bottomBar = findViewById(R.id.toolbar_bottom);
 
-        Menu bottomMenu = bottomBar.getMenu();
+        Menu topMenu = bottomBar.getMenu();
 
-        getMenuInflater().inflate(R.menu.menu, bottomMenu);
+        getMenuInflater().inflate(R.menu.menu, topMenu);
 
-        bottomMenu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        topMenu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 try {
@@ -93,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         final Button initStartButton = (Button) findViewById(R.id.initStartButton);
         initStartButton.setTag(0);
         initStartButton.setText("INIT");
@@ -116,6 +128,14 @@ public class MainActivity extends AppCompatActivity {
                 } else if (status == 1) {
                     initStartButton.setText("STOP");
                     v.setTag(2); //pause
+                    try {
+                        client = new Ros(new URI("ws://" + rosIp + ":9091"));
+                        client.connect();
+                    } catch (URISyntaxException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    configPub = new Topic(client, "/unity/config", "ftc_msgs/DcMotorInput");
+                    configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(getConfigurationFromYAMLFile()));
                     launchOpModeThread(selectedProgramIsLinearOpMode);
                 } else if (status == 2) {
                     opMode.stop();
@@ -129,6 +149,34 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+    private String getConfigurationFromYAMLFile() {
+        try {
+            StringBuilder sb = new StringBuilder();
+            FileInputStream fis = new FileInputStream(new File(getFilesDir() + "/activeConfiguration.yaml"));
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader buff = new BufferedReader(isr);
+
+            String line;
+            while ((line = buff.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+
+            fis.close();
+            return sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "motors: [\n" +
+                    "  {frc: \"frontLeft\", sim: \"motor1\"},\n" +
+                    "  {frc: \"frontRight\", sim: \"motor2\"},\n" +
+                    "  {frc: \"backLeft\", sim: \"motor3\"},\n" +
+                    "  {frc: \"backRight\", sim: \"motor4\"},\n" +
+                    "  {frc: \"intake\", sim: \"motor5\"},\n" +
+                    "  {frc: \"hopper\", sim: \"motor6\"},\n" +
+                    "  {frc: \"leftShooter\", sim: \"motor7\"},\n" +
+                    "  {frc: \"rightShooter\", sim: \"motor8\"},\n" +
+                    "]";
+        }
     }
 
     private void launchGamepadThread() {

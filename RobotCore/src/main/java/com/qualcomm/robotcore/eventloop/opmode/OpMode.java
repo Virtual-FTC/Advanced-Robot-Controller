@@ -35,8 +35,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.DcMotorOutput;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import java.util.concurrent.TimeUnit;
 
 public abstract class OpMode {
@@ -126,22 +124,6 @@ public abstract class OpMode {
    */
   public void resetStartTime() {
     startTime = System.nanoTime();
-  }
-
-  //----------------------------------------------------------------------------------------------
-  // Telemetry management
-  //----------------------------------------------------------------------------------------------
-
-  /**
-   * Refreshes the user's telemetry on the driver station with the contents of the provided telemetry
-   * object if a nominal amount of time has passed since the last telemetry transmission. Once
-   * transmitted, the contents of the telemetry object are (by default) cleared.
-   *
-   * @param telemetry the telemetry data to transmit
-   * @see Telemetry#update()
-   */
-  public void updateTelemetry(Telemetry telemetry) {
-    telemetry.update();
   }
 
   //----------------------------------------------------------------------------------------------
