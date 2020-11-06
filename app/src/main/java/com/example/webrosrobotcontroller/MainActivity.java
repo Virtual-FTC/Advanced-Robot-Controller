@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final int status = (Integer) v.getTag();
                 if (status == 0) {
+                    System.out.println(robotVM_IPAddress.getText().toString());
                     if (!robotVM_IPAddress.getText().toString().equals("")) {
                         DcMotorImpl.rosIp = robotVM_IPAddress.getText().toString();
                         rosIp = robotVM_IPAddress.getText().toString();
@@ -127,18 +128,19 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    initStartButton.setText("START");
-                    v.setTag(1); //pause
-                } else if (status == 1) {
+                    String config = getConfigurationFromYAMLFile();
                     try {
                         client = new Ros(new URI("ws://" + rosIp + ":9091"));
                         client.connect();
-                    } catch (URISyntaxException | InterruptedException e) {
-                        e.printStackTrace();
+                        configPub = new Topic(client, "/unity/config", "std_msgs/String");
+                        configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(config));
+                    } catch (Exception ignore) {
                     }
-                    configPub = new Topic(client, "/unity/config", "std_msgs/String");
-                    configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(getConfigurationFromYAMLFile()));
-                    
+
+
+                    initStartButton.setText("START");
+                    v.setTag(1); //pause
+                } else if (status == 1) {
                     initStartButton.setText("STOP");
                     v.setTag(2); //pause
 
