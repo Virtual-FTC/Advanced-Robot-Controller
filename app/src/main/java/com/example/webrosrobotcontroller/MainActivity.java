@@ -128,12 +128,11 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    String config = getConfigurationFromYAMLFile();
                     try {
                         client = new Ros(new URI("ws://" + rosIp + ":9091"));
                         client.connect();
-                        configPub = new Topic(client, "/unity/config", "std_msgs/String");
-                        configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(config));
+                        configPub = new Topic(client, "/config/motors", "std_msgs/String");
+                        configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(getConfigurationFromYAMLFile()));
                     } catch (Exception ignore) {
                     }
 
