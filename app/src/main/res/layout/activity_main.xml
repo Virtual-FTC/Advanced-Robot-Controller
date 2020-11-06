@@ -125,7 +125,14 @@
         android:id="@+id/telemetryArea"
         android:layout_below="@+id/playButtonArea"
         android:layout_height="match_parent"
+        android:padding="16dp"
         android:background="@android:color/black">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/telemetryTextView"
+            android:textColor="@android:color/white"/>
 
         <ProgressBar
             android:id="@+id/loadingSign"
