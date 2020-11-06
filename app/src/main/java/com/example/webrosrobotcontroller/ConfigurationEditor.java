@@ -101,7 +101,7 @@ public class ConfigurationEditor extends AppCompatActivity {
 
                             String line;
                             while ((line = buff.readLine()) != null) {
-                                sb.append(line + "\n");
+                                sb.append(line);
                             }
 
                             fis.close();
@@ -115,18 +115,9 @@ public class ConfigurationEditor extends AppCompatActivity {
                             String motor6Name = allConfigs.getJSONArray("devices").get(5).toString();
                             String motor7Name = allConfigs.getJSONArray("devices").get(6).toString();
                             String motor8Name = allConfigs.getJSONArray("devices").get(7).toString();
-                            String newActivityConfigFile = "motors: [\n" +
-                                    "  {frc: \"" + motor1Name + "\", sim: \"motor1\"},\n" +
-                                    "  {frc: \"" + motor2Name + "\", sim: \"motor2\"},\n" +
-                                    "  {frc: \"" + motor3Name + "\", sim: \"motor3\"},\n" +
-                                    "  {frc: \"" + motor4Name + "\", sim: \"motor4\"},\n" +
-                                    "  {frc: \"" + motor5Name + "\", sim: \"motor5\"},\n" +
-                                    "  {frc: \"" + motor6Name + "\", sim: \"motor6\"},\n" +
-                                    "  {frc: \"" + motor7Name + "\", sim: \"motor7\"},\n" +
-                                    "  {frc: \"" + motor8Name + "\", sim: \"motor8\"},\n" +
-                                    "]";
+                            String newActivityConfigFile = "[{\"frc\": \"" + motor1Name + "\", sim: \"motor1\"},{\"frc\": \"" + motor2Name + "\", sim: \"motor2\"},{\"frc\": \"" + motor3Name + "\", sim: \"motor3\"},{\"frc\": \"" + motor4Name + "\", sim: \"motor4\"},{\"frc\": \"" + motor5Name + "\", sim: \"motor5\"},{\"frc\": \"" + motor6Name + "\", sim: \"motor6\"},{\"frc\": \"" + motor7Name + "\", sim: \"motor7\"},{\"frc\": \"" + motor8Name + "\", sim: \"motor8\"}]";
 
-                            writeFileOnInternalStorage(ConfigurationEditor.this, "activeConfiguration.yaml", newActivityConfigFile);
+                            writeFileOnInternalStorage(ConfigurationEditor.this, "activeConfiguration.txt", newActivityConfigFile);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     EditText robotVM_IPAddress;
     String activeConfigurationName = "";
 
-    public static String rosIp = "34.122.98.19";
+    public static String rosIp = "34.122.17.119";
     Ros client = null;
     Topic configPub;
 
@@ -134,17 +134,18 @@ public class MainActivity extends AppCompatActivity {
                     } catch (URISyntaxException | InterruptedException e) {
                         e.printStackTrace();
                     }
-                    configPub = new Topic(client, "/unity/config", "ftc_msgs/DcMotorInput");
+                    configPub = new Topic(client, "/unity/config", "std_msgs/String");
+                    System.out.println("adfhbadfbashd: " + getConfigurationFromYAMLFile());
                     configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(getConfigurationFromYAMLFile()));
                     launchOpModeThread(selectedProgramIsLinearOpMode);
                 } else if (status == 2) {
                     opMode.stop();
                     opModeThread.interrupt();
+                    opModeThread.interrupt();
                     initStartButton.setText("INIT");
                     v.setTag(0); //pause
                     selectedProgramIsLinearOpMode = null;
                     opModeThread = null;
-
                 }
 
             }
@@ -153,29 +154,20 @@ public class MainActivity extends AppCompatActivity {
     private String getConfigurationFromYAMLFile() {
         try {
             StringBuilder sb = new StringBuilder();
-            FileInputStream fis = new FileInputStream(new File(getFilesDir() + "/activeConfiguration.yaml"));
+            FileInputStream fis = new FileInputStream(new File(getFilesDir() + "/activeConfigurationasdf.txt"));
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader buff = new BufferedReader(isr);
 
             String line;
             while ((line = buff.readLine()) != null) {
-                sb.append(line + "\n");
+                sb.append(line);
             }
 
             fis.close();
             return sb.toString();
         } catch (Exception e) {
             e.printStackTrace();
-            return "motors: [\n" +
-                    "  {frc: \"frontLeft\", sim: \"motor1\"},\n" +
-                    "  {frc: \"frontRight\", sim: \"motor2\"},\n" +
-                    "  {frc: \"backLeft\", sim: \"motor3\"},\n" +
-                    "  {frc: \"backRight\", sim: \"motor4\"},\n" +
-                    "  {frc: \"intake\", sim: \"motor5\"},\n" +
-                    "  {frc: \"hopper\", sim: \"motor6\"},\n" +
-                    "  {frc: \"leftShooter\", sim: \"motor7\"},\n" +
-                    "  {frc: \"rightShooter\", sim: \"motor8\"},\n" +
-                    "]";
+            return "[{\"frc\": \"frontLeft\", \"sim\": \"motor1\"},{\"frc\": \"frontRight\", \"sim\": \"motor2\"},{\"frc\": \"backLeft\", \"sim\": \"motor3\"},{\"frc\": \"backRight\", \"sim\": \"motor4\"},{\"frc\": \"intake\", \"sim\": \"motor5\"},{\"frc\": \"hopper\", \"sim\": \"motor6\"},{\"frc\": \"leftShooter\", \"sim\": \"motor7\"},{\"frc\": \"rightShooter\", \"sim\": \"motor8\"}]";
         }
     }
 

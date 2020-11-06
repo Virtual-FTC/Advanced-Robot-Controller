@@ -236,18 +236,9 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
                             String motor6Name = allConfigs.getJSONArray("devices").get(5).toString();
                             String motor7Name = allConfigs.getJSONArray("devices").get(6).toString();
                             String motor8Name = allConfigs.getJSONArray("devices").get(7).toString();
-                            String newActivityConfigFile = "motors: [\n" +
-                                    "  {frc: \"frontLeft\", sim: \"" + motor1Name + "\"},\n" +
-                                    "  {frc: \"frontRight\", sim: \"" + motor2Name + "\"},\n" +
-                                    "  {frc: \"backLeft\", sim: \"" + motor3Name + "\"},\n" +
-                                    "  {frc: \"backRight\", sim: \"" + motor4Name + "\"},\n" +
-                                    "  {frc: \"intake\", sim: \"" + motor5Name + "\"},\n" +
-                                    "  {frc: \"hopper\", sim: \"" + motor6Name + "\"},\n" +
-                                    "  {frc: \"leftShooter\", sim: \"" + motor7Name + "\"},\n" +
-                                    "  {frc: \"rightShooter\", sim: \"" + motor8Name + "\"},\n" +
-                                    "]";
+                            String newActivityConfigFile = "[{\"frc\": \"" + motor1Name + "\", sim: \"motor1\"},{\"frc\": \"" + motor2Name + "\", sim: \"motor2\"},{\"frc\": \"" + motor3Name + "\", sim: \"motor3\"},{\"frc\": \"" + motor4Name + "\", sim: \"motor4\"},{\"frc\": \"" + motor5Name + "\", sim: \"motor5\"},{\"frc\": \"" + motor6Name + "\", sim: \"motor6\"},{\"frc\": \"" + motor7Name + "\", sim: \"motor7\"},{\"frc\": \"" + motor8Name + "\", sim: \"motor8\"}]";
 
-                            writeFileOnInternalStorage(getContext(), "activeConfiguration.yaml", newActivityConfigFile);
+                            writeFileOnInternalStorage(getContext(), "activeConfiguration.txt", newActivityConfigFile);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
