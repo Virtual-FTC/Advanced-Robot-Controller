@@ -114,8 +114,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final int status = (Integer) v.getTag();
                 if (status == 0) {
-                    DcMotorImpl.rosIp = robotVM_IPAddress.getText().toString();
-                    rosIp = robotVM_IPAddress.getText().toString();
+                    System.out.println(robotVM_IPAddress.getText().toString());
+                    if (!robotVM_IPAddress.getText().toString().equals("")) {
+                        DcMotorImpl.rosIp = robotVM_IPAddress.getText().toString();
+                        rosIp = robotVM_IPAddress.getText().toString();
+                    }
                     try {
                         Class opModeClass = Class.forName("org.firstinspires.ftc.teamcode." + opModeSelector.getSelectedItem().toString());//opModeSelector.getSelectedItem().toString().getClass();
                         opMode = (OpMode) opModeClass.newInstance();
@@ -125,19 +128,22 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
+                    String config = getConfigurationFromYAMLFile();
+                    try {
+                        client = new Ros(new URI("ws://" + rosIp + ":9091"));
+                        client.connect();
+                        configPub = new Topic(client, "/unity/config", "std_msgs/String");
+                        configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(config));
+                    } catch (Exception ignore) {
+                    }
+
+
                     initStartButton.setText("START");
                     v.setTag(1); //pause
                 } else if (status == 1) {
                     initStartButton.setText("STOP");
                     v.setTag(2); //pause
-                    try {
-                        client = new Ros(new URI("ws://" + rosIp + ":9091"));
-                        client.connect();
-                    } catch (URISyntaxException | InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    configPub = new Topic(client, "/unity/config", "std_msgs/String");
-                    configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(getConfigurationFromYAMLFile()));
+
                     launchOpModeThread(selectedProgramIsLinearOpMode);
                 } else if (status == 2) {
                     opMode.stop();
