@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
     private String getConfigurationFromYAMLFile() {
         try {
             StringBuilder sb = new StringBuilder();
-            FileInputStream fis = new FileInputStream(new File(getFilesDir() + "/activeConfigurationasdf.txt"));
+            FileInputStream fis = new FileInputStream(new File(getFilesDir() + "/activeConfigurationasdf.txt")); //actual file name is "activeConfiguration.txt". This line intentionally crashes and it is forced to go to the catch. ONLY FOR TESTING THE FORMAT OF SENDING TO ROS
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader buff = new BufferedReader(isr);
 
