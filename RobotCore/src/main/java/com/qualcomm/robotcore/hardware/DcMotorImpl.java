@@ -49,7 +49,7 @@ public class DcMotorImpl implements DcMotor {
     private ZeroPowerBehavior zeroPowerBehavior = ZeroPowerBehavior.BRAKE;
 
 
-    public static String rosIp = "34.122.17.119";
+    public static String rosIp = "35.232.174.143";
 
     Ros client = null;
 

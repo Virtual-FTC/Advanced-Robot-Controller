@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     EditText robotVM_IPAddress;
     String activeConfigurationName = "";
 
-    public static String rosIp = "34.122.17.119";
+    public static String rosIp = "35.232.174.143";
     Ros client = null;
     Topic configPub;
 
