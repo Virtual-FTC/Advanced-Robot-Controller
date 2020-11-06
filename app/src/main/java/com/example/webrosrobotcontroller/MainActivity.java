@@ -135,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     configPub = new Topic(client, "/unity/config", "std_msgs/String");
-                    System.out.println("adfhbadfbashd: " + getConfigurationFromYAMLFile());
                     configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(getConfigurationFromYAMLFile()));
                     launchOpModeThread(selectedProgramIsLinearOpMode);
                 } else if (status == 2) {
