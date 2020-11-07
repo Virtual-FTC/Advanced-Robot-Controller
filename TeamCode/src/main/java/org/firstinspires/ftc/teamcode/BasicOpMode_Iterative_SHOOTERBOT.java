@@ -11,7 +11,7 @@ public class BasicOpMode_Iterative_SHOOTERBOT extends OpMode
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor motor1, motor2, motor3, motor4, motor5, motor6, motor7, motor8;
-    double movementPower = 1.0, fL_power, fR_power, bL_power, bR_power;
+    double fL_power, fR_power, bL_power, bR_power;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -49,15 +49,15 @@ public class BasicOpMode_Iterative_SHOOTERBOT extends OpMode
      */
     @Override
     public void loop() {
-        fL_power = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * Math.cos(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4) - gamepad1.right_stick_x / 2;
-        fR_power = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * Math.sin(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4) + gamepad1.right_stick_x / 2;
-        bL_power = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * Math.sin(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4) - gamepad1.right_stick_x / 2;
-        bR_power = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * Math.cos(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4) + gamepad1.right_stick_x / 2;
+        fL_power = (Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * (Math.cos(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x)) - Math.PI / 4)) - gamepad1.right_stick_x / 2;
+        fR_power = (Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * (Math.sin(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x)) - Math.PI / 4)) + gamepad1.right_stick_x / 2;
+        bL_power = (Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * (Math.sin(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x)) - Math.PI / 4)) - gamepad1.right_stick_x / 2;
+        bR_power = (Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * (Math.cos(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x)) - Math.PI / 4)) + gamepad1.right_stick_x / 2;
 
-        motor1.setPower(-movementPower * fL_power);
-        motor2.setPower(-movementPower * fR_power);
-        motor3.setPower(-movementPower * bL_power);
-        motor4.setPower(-movementPower * bR_power);
+        motor1.setPower(-fL_power);
+        motor2.setPower(-fR_power);
+        motor3.setPower(-bL_power);
+        motor4.setPower(-bR_power);
 
         if(gamepad1.a) {
             motor5.setPower(1.0);
