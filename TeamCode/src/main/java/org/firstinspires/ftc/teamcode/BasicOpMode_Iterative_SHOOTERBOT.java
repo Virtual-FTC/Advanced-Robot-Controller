@@ -19,14 +19,14 @@ public class BasicOpMode_Iterative_SHOOTERBOT extends OpMode
 
     @Override
     public void init() {
-        motor1 = this.hardwareMap.dcMotor.get("motor1");
-        motor2 = this.hardwareMap.dcMotor.get("motor2");
-        motor3 = this.hardwareMap.dcMotor.get("motor3");
-        motor4 = this.hardwareMap.dcMotor.get("motor4");
-        motor5 = this.hardwareMap.dcMotor.get("motor5");
-        motor6 = this.hardwareMap.dcMotor.get("motor6");
-        motor7 = this.hardwareMap.dcMotor.get("motor7");
-        motor8 = this.hardwareMap.dcMotor.get("motor8");
+        motor1 = this.hardwareMap.dcMotor.get("frontLeft");
+        motor2 = this.hardwareMap.dcMotor.get("frontRight");
+        motor3 = this.hardwareMap.dcMotor.get("backLeft");
+        motor4 = this.hardwareMap.dcMotor.get("backRight");
+        motor5 = this.hardwareMap.dcMotor.get("intake");
+        motor6 = this.hardwareMap.dcMotor.get("hopper");
+        motor7 = this.hardwareMap.dcMotor.get("leftShooter");
+        motor8 = this.hardwareMap.dcMotor.get("rightShooter");
     }
 
     /*
