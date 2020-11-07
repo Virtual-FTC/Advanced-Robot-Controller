@@ -65,7 +65,7 @@ public class BasicOpMode_Iterative_SHOOTERBOT extends OpMode
             motor6.setPower(1.0);
         } else if(gamepad1.y) {
             motor7.setPower(1.0);
-            motor8.setPower(-1.0);
+            motor8.setPower(1.0);
         } else {
             motor5.setPower(0.0);
             motor6.setPower(0.0);
