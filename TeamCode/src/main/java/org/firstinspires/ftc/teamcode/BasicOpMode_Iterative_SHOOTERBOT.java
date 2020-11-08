@@ -49,10 +49,10 @@ public class BasicOpMode_Iterative_SHOOTERBOT extends OpMode
      */
     @Override
     public void loop() {
-        fL_power = (Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * (Math.cos(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x)) - Math.PI / 4)) - gamepad1.right_stick_x / 2;
-        fR_power = (Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * (Math.sin(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x)) - Math.PI / 4)) + gamepad1.right_stick_x / 2;
-        bL_power = (Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * (Math.sin(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x)) - Math.PI / 4)) - gamepad1.right_stick_x / 2;
-        bR_power = (Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * (Math.cos(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x)) - Math.PI / 4)) + gamepad1.right_stick_x / 2;
+        fL_power = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y) * Math.cos(Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4) - gamepad1.right_stick_x / 2;
+        fR_power = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y) * Math.sin(Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4) + gamepad1.right_stick_x / 2;
+        bL_power = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y) * Math.sin(Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4) - gamepad1.right_stick_x / 2;
+        bR_power = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y) * Math.cos(Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4) + gamepad1.right_stick_x / 2;
 
         motor1.setPower(-fL_power);
         motor2.setPower(-fR_power);
@@ -61,14 +61,20 @@ public class BasicOpMode_Iterative_SHOOTERBOT extends OpMode
 
         if(gamepad1.a) {
             motor5.setPower(1.0);
-        } else if(gamepad1.b) {
+        } else {
+            motor5.setPower(0.0);
+        }
+
+        if(gamepad1.b) {
             motor6.setPower(1.0);
-        } else if(gamepad1.y) {
+        } else {
+            motor6.setPower(0.0);
+        }
+
+        if(gamepad1.y) {
             motor7.setPower(1.0);
             motor8.setPower(1.0);
         } else {
-            motor5.setPower(0.0);
-            motor6.setPower(0.0);
             motor7.setPower(0.0);
             motor8.setPower(0.0);
         }

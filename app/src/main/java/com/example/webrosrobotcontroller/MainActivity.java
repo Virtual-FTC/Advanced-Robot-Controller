@@ -17,9 +17,13 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -59,21 +63,26 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
     EditText robotVM_IPAddress;
     String activeConfigurationName = "";
+    TextView telemetryOutputTextField;
 
     public static String rosIp = "35.232.174.143";
     Ros client = null;
     Topic configPub;
+    boolean canCheckForGamepad = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        checkForGamepad();
+        canCheckForGamepad = true;
+        launchGamepadThread();
         populateClassSelector();
         progressBar = findViewById(R.id.loadingSign);
         progressBar.setVisibility(View.INVISIBLE);
         robotVM_IPAddress = findViewById(R.id.robotVM_IPAddress);
+
+        telemetryOutputTextField = findViewById(R.id.telemetryTextView);
 
         ActionMenuView bottomBar = findViewById(R.id.toolbar_bottom);
 
@@ -99,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                     activeConfigurationName = "No Config Set";
                 }
+                canCheckForGamepad = false;
                 Intent intent = new Intent(MainActivity.this, ConfigurationActivity.class);
                 intent.putExtra("ACTIVE_CONFIGURATION_NAME", activeConfigurationName);
                 startActivity(intent);
@@ -183,8 +193,13 @@ public class MainActivity extends AppCompatActivity {
         gamepadCheckThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
+                while (canCheckForGamepad) {
                     checkForGamepad();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -311,7 +326,21 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     MainActivity.this.wait(2500); //wait for 2.5 seconds to run any init code and establish web socket communication
                     while (opModeThread != null) {
-                        opMode.loop();
+                        try {
+                            opMode.loop();
+                        } catch (Exception ignore) {
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    canUpdateGamepad = false;
+                                    selectedProgramIsLinearOpMode = null;
+                                    opModeThread = null;
+                                    Toast.makeText(MainActivity.this, "Connection Failed. Please try again.", Toast.LENGTH_SHORT).show();
+                                    final Button initStartButton = (Button) findViewById(R.id.initStartButton);
+                                    initStartButton.setTag(0);
+                                    initStartButton.setText("INIT");
+                                }
+                            });
+                        }
                     }
                 }
             });
@@ -337,20 +366,21 @@ public class MainActivity extends AppCompatActivity {
             if (((sources & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD)
                     || ((sources & InputDevice.SOURCE_JOYSTICK)
                     == InputDevice.SOURCE_JOYSTICK)) {
-//                MainActivity.this.runOnUiThread(new Runnable() {
-//                    public void run() {
-//                        ImageView gamepadImage = (ImageView) findViewById(R.id.gamepadImage);
-//                        gamepadImage.setVisibility(View.VISIBLE);
-//                    }
-//                });
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        ImageView gamepadImage = (ImageView) findViewById(R.id.gamepadImage);
+                        gamepadImage.setVisibility(View.VISIBLE);
+                    }
+                });
                 return;
+            } else {
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        ImageView gamepadImage = (ImageView) findViewById(R.id.gamepadImage);
+                        gamepadImage.setVisibility(View.INVISIBLE);
+                    }
+                });
             }
-//            MainActivity.this.runOnUiThread(new Runnable() {
-//                public void run() {
-//                    ImageView gamepadImage = (ImageView) findViewById(R.id.gamepadImage);
-//                    gamepadImage.setVisibility(View.INVISIBLE);
-//                }
-//            });
         }
     }
 
@@ -495,14 +525,15 @@ public class MainActivity extends AppCompatActivity {
                     MotionEvent.AXIS_RZ, historyPos);
         }
 
-        Log.d("x , y", "x: " + x + " y: " + y);
-        Log.d("rx , ry", "rx: " + rx + " ry: " + ry);
+        telemetryOutputTextField.setText("x: " + Math.round(x * 100.0) / 100.0 + "\ny: " + Math.round(y * 100.0) / 100.0 + "\nrx: " + Math.round(rx * 100.0) / 100.0 + "\nry: " + Math.round(ry * 100.0) / 100.0);
 
         if (canUpdateGamepad) {
             opMode.gamepad1.left_stick_x = x;
             opMode.gamepad1.left_stick_y = y;
             opMode.gamepad1.right_stick_x = rx;
             opMode.gamepad1.right_stick_y = ry;
+        } else {
+            System.out.println("x: " + x + ", y: " + y + ", ");
         }
     }
 }

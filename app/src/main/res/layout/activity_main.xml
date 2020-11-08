@@ -42,6 +42,7 @@
                 android:layout_marginTop="0dp"
                 android:id="@+id/gamepadImage"
                 android:layout_marginEnd="100dp"
+                android:visibility="invisible"
                 android:background="@drawable/ic_baseline_videogame_asset_24"/>
 
             <TextView
