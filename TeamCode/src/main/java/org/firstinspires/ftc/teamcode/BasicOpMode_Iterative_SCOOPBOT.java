@@ -19,13 +19,13 @@ public class BasicOpMode_Iterative_SCOOPBOT extends OpMode
 
     @Override
     public void init() {
-        motor1 = this.hardwareMap.dcMotor.get("motor1");
-        motor2 = this.hardwareMap.dcMotor.get("motor2");
-        motor3 = this.hardwareMap.dcMotor.get("motor3");
-        motor4 = this.hardwareMap.dcMotor.get("motor4");
-        motor5 = this.hardwareMap.dcMotor.get("motor5");
-        motor6 = this.hardwareMap.dcMotor.get("motor6");
-        motor7 = this.hardwareMap.dcMotor.get("motor7");
+        motor1 = this.hardwareMap.dcMotor.get("left");
+        motor2 = this.hardwareMap.dcMotor.get("right");
+        motor3 = this.hardwareMap.dcMotor.get("intake");
+        motor4 = this.hardwareMap.dcMotor.get("hopper");
+        motor5 = this.hardwareMap.dcMotor.get("shooter");
+        motor6 = this.hardwareMap.dcMotor.get("leftScoop");
+        motor7 = this.hardwareMap.dcMotor.get("rightScoop");
     }
 
     /*
