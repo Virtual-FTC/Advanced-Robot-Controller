@@ -48,8 +48,8 @@ public class BasicOpMode_Iterative_SCOOPBOT extends OpMode
      */
     @Override
     public void loop() {
-        leftPower = gamepad1.left_stick_y - gamepad1.right_stick_x / 2; //MAY NEED TO REVERSE DIRECTION of STICK or Operation from "-" to "+"
-        rightPower = gamepad1.left_stick_y + gamepad1.right_stick_x / 2; //MAY NEED TO REVERSE DIRECTION of STICK or Operation from "-" to "+"
+        leftPower = -gamepad1.left_stick_y - gamepad1.right_stick_x / 2; //MAY NEED TO REVERSE DIRECTION of STICK or Operation from "-" to "+"
+        rightPower = -gamepad1.left_stick_y + gamepad1.right_stick_x / 2; //MAY NEED TO REVERSE DIRECTION of STICK or Operation from "-" to "+"
 
         motor1.setPower(leftPower);
         motor2.setPower(rightPower);
