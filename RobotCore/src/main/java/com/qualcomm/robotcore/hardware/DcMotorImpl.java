@@ -81,6 +81,8 @@ public class DcMotorImpl implements DcMotor {
         DcMotorInput toSend = new DcMotorInput(power, "");
         motorPub.publish(toSend);
 
+        currentTime = System.currentTimeMillis();
+
         motorOutputPub = new Topic(client, "/unity/" + motorType + "/output", "ftc_msgs/DcMotorOutput");
         motorOutputPub.subscribe(new TopicCallback() {
             @Override
@@ -136,10 +138,18 @@ public class DcMotorImpl implements DcMotor {
      * Set requested power
      * @param power the new power level of the motor, a value in the interval [-1.0, 1.0]
      */
+
+    long currentTime;
+    int timeInterval = 100;
+
     public synchronized void setPower(double power){
-        this.power = direction == Direction.REVERSE ? -power : power;
-        publishCmdVel();
+        if(System.currentTimeMillis() >= currentTime + timeInterval) {
+            this.power = direction == Direction.REVERSE ? -power : power;
+            publishCmdVel();
+        }
     }
+
+    
 
     /**
      * Get actual speed
