@@ -48,7 +48,10 @@ public class DcMotorImpl implements DcMotor {
 
     private ZeroPowerBehavior zeroPowerBehavior = ZeroPowerBehavior.BRAKE;
 
-    public static Ros client = null;
+
+    public static String rosIp = "35.232.174.143";
+
+    Ros client = null;
 
     Topic motorPub;
     Topic motorOutputPub;
@@ -60,14 +63,6 @@ public class DcMotorImpl implements DcMotor {
         motorPub.publish(dcMotorInputToSend);
     }
 
-
-    public static void connectClient() {
-        try {
-            client.connect();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
     /**
      * For internal use only.
      * @param motorType
@@ -76,12 +71,12 @@ public class DcMotorImpl implements DcMotor {
         MOTOR_TYPE = MotorType.Neverest20;
         MOTOR_CONFIGURATION_TYPE = new MotorConfigurationType(MOTOR_TYPE);
 
-//        try {
-//            client = new Ros(new URI("ws://" + rosIp + ":9091"));
-//            client.connect();
-//        } catch (URISyntaxException | InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            client = new Ros(new URI("ws://" + rosIp + ":9091"));
+            client.connect();
+        } catch (URISyntaxException | InterruptedException e) {
+            e.printStackTrace();
+        }
         motorPub = new Topic(client, "/unity/" + motorType + "/input", "ftc_msgs/DcMotorInput");
         DcMotorInput toSend = new DcMotorInput(power, "");
         motorPub.publish(toSend);

@@ -54,10 +54,6 @@ public class Ros {
 		this.webRos.connectBlocking();
 	}
 
-	public void disconnect() throws InterruptedException {
-		this.webRos.closeBlocking();
-	}
-
 	/**
 	 * Get the next unique ID number for this connection.
 	 * 

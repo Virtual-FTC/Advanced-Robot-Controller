@@ -125,21 +125,9 @@ public class MainActivity extends AppCompatActivity {
                 final int status = (Integer) v.getTag();
                 if (status == 0) {
                     if (!robotVM_IPAddress.getText().toString().equals("")) {
+                        DcMotorImpl.rosIp = robotVM_IPAddress.getText().toString();
                         rosIp = robotVM_IPAddress.getText().toString();
                     }
-
-                    try {
-                        client = new Ros(new URI("ws://" + rosIp + ":9091"));
-                        DcMotorImpl.client = client;
-                        DcMotorImpl.connectClient();
-                        client.connect();
-                        configPub = new Topic(client, "/config/motors", "std_msgs/String");
-                        configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(getConfigurationFromYAMLFile()));
-                    } catch (Exception ignore) {
-
-                    }
-
-
                     try {
                         Class opModeClass = Class.forName("org.firstinspires.ftc.teamcode." + opModeSelector.getSelectedItem().toString());//opModeSelector.getSelectedItem().toString().getClass();
                         opMode = (OpMode) opModeClass.newInstance();
@@ -149,7 +137,13 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-
+                    try {
+                        client = new Ros(new URI("ws://" + rosIp + ":9091"));
+                        client.connect();
+                        configPub = new Topic(client, "/config/motors", "std_msgs/String");
+                        configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(getConfigurationFromYAMLFile()));
+                    } catch (Exception ignore) {
+                    }
 
 
                     initStartButton.setText("START");
@@ -160,11 +154,6 @@ public class MainActivity extends AppCompatActivity {
 
                     launchOpModeThread(selectedProgramIsLinearOpMode);
                 } else if (status == 2) {
-                    try {
-                        client.disconnect();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     opMode.stop();
                     opModeThread.interrupt();
                     opModeThread.interrupt();
@@ -238,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + rosIp, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorImpl.rosIp, Toast.LENGTH_SHORT).show();
                                 Button initStartButton = (Button) findViewById(R.id.initStartButton);
                                 initStartButton.setEnabled(true);
                                 initStartButton.setTag(0);
@@ -324,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception ignore) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + rosIp, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorImpl.rosIp, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
