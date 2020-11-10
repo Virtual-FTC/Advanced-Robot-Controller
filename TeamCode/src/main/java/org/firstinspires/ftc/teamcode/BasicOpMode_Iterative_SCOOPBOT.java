@@ -10,7 +10,7 @@ public class BasicOpMode_Iterative_SCOOPBOT extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor motor1, motor2, motor3, motor4, motor5, motor6, motor7;
+    private DcMotor motor1, motor2, motor3, motor4, motor5, motor6, motor7, motor8;
     double leftPower, rightPower;
 
     /*
@@ -24,8 +24,9 @@ public class BasicOpMode_Iterative_SCOOPBOT extends OpMode
         motor3 = this.hardwareMap.dcMotor.get("intake");
         motor4 = this.hardwareMap.dcMotor.get("hopper");
         motor5 = this.hardwareMap.dcMotor.get("shooter");
-        motor6 = this.hardwareMap.dcMotor.get("leftScoop");
-        motor7 = this.hardwareMap.dcMotor.get("rightScoop");
+        motor6 = this.hardwareMap.dcMotor.get("lscoop");
+        motor7 = this.hardwareMap.dcMotor.get("rscoop");
+        motor8 = this.hardwareMap.dcMotor.get("blank");
     }
 
     /*

@@ -124,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final int status = (Integer) v.getTag();
                 if (status == 0) {
-                    System.out.println(robotVM_IPAddress.getText().toString());
                     if (!robotVM_IPAddress.getText().toString().equals("")) {
                         DcMotorImpl.rosIp = robotVM_IPAddress.getText().toString();
                         rosIp = robotVM_IPAddress.getText().toString();
