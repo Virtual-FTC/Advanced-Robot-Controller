@@ -6,145 +6,157 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="75dp"
-        android:id="@+id/topBar"
-        android:background="@android:color/black">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:text="11039-DS"
-            android:textSize="20dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"/>
+        android:layout_height="match_parent">
 
         <RelativeLayout
-            android:layout_width="200dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-            <androidx.appcompat.widget.ActionMenuView
-                android:id="@+id/toolbar_bottom"
-                android:layout_width="56dp"
-                style="@style/TextAppearance.AppCompat.Large"
-                android:layout_height="?android:attr/actionBarSize"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:id="@+id/topBar"
+                android:background="@android:color/black">
 
-            <ImageView
-                android:layout_width="50dp"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:text="11039-DS"
+                    android:textSize="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"/>
+
+                <RelativeLayout
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true">
+
+                    <androidx.appcompat.widget.ActionMenuView
+                        android:id="@+id/toolbar_bottom"
+                        android:layout_width="56dp"
+                        style="@style/TextAppearance.AppCompat.Large"
+                        android:layout_height="?android:attr/actionBarSize"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"/>
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="0dp"
+                        android:id="@+id/gamepadImage"
+                        android:layout_marginEnd="100dp"
+                        android:visibility="invisible"
+                        android:background="@drawable/ic_baseline_videogame_asset_24"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:text="User 1"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="10dp"
+                        android:id="@+id/userLabel"
+                        android:layout_marginTop="10dp"/>
+
+
+
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_below="@+id/topBar"
+                android:id="@+id/infoBar"
+                android:layout_height="100dp"
+                android:background="@drawable/background_border">
+
+                <EditText
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Robot VM IP"
+                    android:gravity="center"
+                    android:id="@+id/robotVM_IPAddress"
+                    android:inputType="number"
+                    android:digits="0123456789."
+                    android:layout_centerInParent="true"/>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:id="@+id/opModeSelectorBar"
+                android:layout_below="@+id/infoBar"
                 android:layout_height="50dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="0dp"
-                android:id="@+id/gamepadImage"
-                android:layout_marginEnd="100dp"
-                android:visibility="invisible"
-                android:background="@drawable/ic_baseline_videogame_asset_24"/>
+                android:background="@color/redSuperLight">
+                <Spinner
+                    android:id="@+id/classSelector"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    android:layout_marginTop="-50dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:text="User 1"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="10dp"
-                android:id="@+id/userLabel"
-                android:layout_marginTop="10dp"/>
+            </RelativeLayout>
 
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:id="@+id/playButtonArea"
+                android:layout_below="@+id/opModeSelectorBar"
+                android:layout_height="300dp"
+                android:background="@drawable/play_button_area_background">
 
+                <Button
+                    android:id="@+id/initStartButton"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/init_button"
+                    android:textSize="25dp"
+                    android:textColor="@android:color/black"
+                    android:text="INIT" />
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:id="@+id/telemetryArea"
+                android:layout_below="@+id/playButtonArea"
+                android:layout_height="350dp"
+                android:padding="16dp"
+                android:background="@android:color/black">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/telemetryTextView"
+                    android:textColor="@android:color/white"/>
+
+                <ProgressBar
+                    android:id="@+id/loadingSign"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="25dp"
+                    android:progressDrawable="@drawable/circular_progress_bar"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
-    </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_below="@+id/topBar"
-        android:id="@+id/infoBar"
-        android:layout_height="100dp"
-        android:background="@drawable/background_border">
-
-        <EditText
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:hint="Robot VM IP"
-            android:gravity="center"
-            android:id="@+id/robotVM_IPAddress"
-            android:inputType="number"
-            android:digits="0123456789."
-            android:layout_centerInParent="true"/>
-
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:id="@+id/opModeSelectorBar"
-        android:layout_below="@+id/infoBar"
-        android:layout_height="50dp"
-        android:background="@color/redSuperLight">
-        <Spinner
-            android:id="@+id/classSelector"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_centerInParent="true"
-            android:layout_centerHorizontal="true"
-            android:textAlignment="center"
-            android:gravity="center"
-            android:layout_marginTop="-50dp" />
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:id="@+id/playButtonArea"
-        android:layout_below="@+id/opModeSelectorBar"
-        android:layout_height="300dp"
-        android:background="@drawable/play_button_area_background">
-
-        <Button
-            android:id="@+id/initStartButton"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_centerInParent="true"
-            android:background="@drawable/init_button"
-            android:textSize="25dp"
-            android:textColor="@android:color/black"
-            android:text="INIT" />
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:id="@+id/telemetryArea"
-        android:layout_below="@+id/playButtonArea"
-        android:layout_height="match_parent"
-        android:padding="16dp"
-        android:background="@android:color/black">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/telemetryTextView"
-            android:textColor="@android:color/white"/>
-
-        <ProgressBar
-            android:id="@+id/loadingSign"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="25dp"
-            android:progressDrawable="@drawable/circular_progress_bar"
-            android:visibility="visible" />
-
-    </RelativeLayout>
+    </ScrollView>
 
 
 </RelativeLayout>
