@@ -3,6 +3,14 @@ package com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc;
 
 import com.qualcomm.robotcore.hardware.basicwebsocket.messages.Message;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 
@@ -30,14 +38,15 @@ public class DcMotorInput extends Message {
      */
     public static final String TYPE = "ftc_msgs/DcMotorInput";
 
-    private final double cmd;
-    private final String mode;
+    private final double[] cmd;
+    private final String[] mode;
 
     /**
      * Create a new DcMotorInput with all 0s.
      */
+    
     public DcMotorInput() {
-        this(0.0, "");
+        this(new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, new String[]{"", "", "", "", "", "", "", ""});
     }
 
     /**
@@ -48,11 +57,25 @@ public class DcMotorInput extends Message {
      * @param mode
      *            The mode value of the twist.
      */
-    public DcMotorInput(double cmd, String mode) {
+    public DcMotorInput(double[] cmd, String[] mode) {
         // build the JSON object
         super(Json.createObjectBuilder()
-                        .add(DcMotorInput.FIELD_CMD, cmd)
-                        .add(DcMotorInput.FIELD_MODE, mode).build(),
+                        .add("motor_one", cmd[0])
+                        .add(DcMotorInput.FIELD_MODE, mode[0])
+                        .add("motor_two", cmd[1])
+                        .add(DcMotorInput.FIELD_MODE, mode[1])
+                        .add("motor_three", cmd[2])
+                        .add(DcMotorInput.FIELD_MODE, mode[2])
+                        .add("motor_", cmd[3])
+                        .add(DcMotorInput.FIELD_MODE, mode[3])
+                        .add("motor_", cmd[4])
+                        .add(DcMotorInput.FIELD_MODE, mode[4])
+                        .add("motor_", cmd[5])
+                        .add(DcMotorInput.FIELD_MODE, mode[5])
+                        .add("motor_", cmd[6])
+                        .add(DcMotorInput.FIELD_MODE, mode[6])
+                        .add("motor_", cmd[7])
+                        .add(DcMotorInput.FIELD_MODE, mode[7]).build(),
                 DcMotorInput.TYPE);
         this.cmd = cmd;
         this.mode = mode;
@@ -63,7 +86,7 @@ public class DcMotorInput extends Message {
      *
      * @return The cmd value of this twist.
      */
-    public double getCmd() {
+    public double[] getCmd() {
         return this.cmd;
     }
 
@@ -72,7 +95,7 @@ public class DcMotorInput extends Message {
      *
      * @return The mode value of this twist.
      */
-    public String getMode() {
+    public String[] getMode() {
         return this.mode;
     }
 
@@ -81,7 +104,7 @@ public class DcMotorInput extends Message {
      */
     @Override
     public DcMotorInput clone() {
-        return new DcMotorInput(this.cmd, this.mode);
+        return new DcMotorInput(cmd, mode);
     }
 
     /**
