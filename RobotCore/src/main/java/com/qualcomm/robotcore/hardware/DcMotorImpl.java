@@ -53,11 +53,15 @@ public class DcMotorImpl implements DcMotor {
 
     Ros client = null;
 
+    Topic motorPub;
     Topic motorOutputPub;
 
     private double encoderPosition;
 
-    String motorName;
+    public void publishCmdVel(){
+        DcMotorInput dcMotorInputToSend = new DcMotorInput(power, "");
+        motorPub.publish(dcMotorInputToSend);
+    }
 
     /**
      * For internal use only.
@@ -65,7 +69,6 @@ public class DcMotorImpl implements DcMotor {
      */
     public DcMotorImpl(String motorType){
         MOTOR_TYPE = MotorType.Neverest20;
-        this.motorName = motorType;
         MOTOR_CONFIGURATION_TYPE = new MotorConfigurationType(MOTOR_TYPE);
 
         try {
@@ -74,6 +77,11 @@ public class DcMotorImpl implements DcMotor {
         } catch (URISyntaxException | InterruptedException e) {
             e.printStackTrace();
         }
+        motorPub = new Topic(client, "/unity/" + motorType + "/input", "ftc_msgs/DcMotorInput");
+        DcMotorInput toSend = new DcMotorInput(power, "");
+        motorPub.publish(toSend);
+
+        currentTime = System.currentTimeMillis();
 
         motorOutputPub = new Topic(client, "/unity/" + motorType + "/output", "ftc_msgs/DcMotorOutput");
         motorOutputPub.subscribe(new TopicCallback() {
@@ -87,12 +95,6 @@ public class DcMotorImpl implements DcMotor {
             }
         });
     }
-
-//    public static void setEncoderCount(String name, double encoderCount) {
-//        if(motorName.equals(name)) {
-//            actualPosition = encoderCount;
-//        }
-//    }
 
     /**
      * Set mode of operation
@@ -143,6 +145,7 @@ public class DcMotorImpl implements DcMotor {
     public synchronized void setPower(double power){
         if(System.currentTimeMillis() >= currentTime + timeInterval) {
             this.power = direction == Direction.REVERSE ? -power : power;
+            publishCmdVel();
         }
     }
 
