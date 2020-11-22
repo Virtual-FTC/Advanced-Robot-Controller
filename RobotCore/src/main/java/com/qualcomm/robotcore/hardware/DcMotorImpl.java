@@ -1,5 +1,6 @@
 package com.qualcomm.robotcore.hardware;
 
+import com.qualcomm.robotcore.DcMotorMaster;
 import com.qualcomm.robotcore.hardware.basicwebsocket.Ros;
 import com.qualcomm.robotcore.hardware.basicwebsocket.Topic;
 import com.qualcomm.robotcore.hardware.basicwebsocket.callback.TopicCallback;
@@ -8,6 +9,12 @@ import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.DcMotorInput;
 import com.qualcomm.robotcore.hardware.configuration.MotorType;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Random;
@@ -31,7 +38,7 @@ public class DcMotorImpl implements DcMotor {
     protected Direction direction = Direction.FORWARD;
 
     //power is the requested speed, normalized to the -1 to +1 range
-    private double power = 0.0;
+    public double power = 0.0;
 
     //speed is the actual speed, normalized to the -1 to +1 range
     private double speed = 0.0;
@@ -48,139 +55,174 @@ public class DcMotorImpl implements DcMotor {
 
     private ZeroPowerBehavior zeroPowerBehavior = ZeroPowerBehavior.BRAKE;
 
-
-    public static String rosIp = "35.232.174.143";
-
-    Ros client = null;
-
-    Topic motorPub;
-    Topic motorOutputPub;
-
-    private double encoderPosition;
-
-    public void publishCmdVel(){
-        DcMotorInput dcMotorInputToSend = new DcMotorInput(power, "");
-        motorPub.publish(dcMotorInputToSend);
-    }
+    public double encoderPosition;
 
     /**
      * For internal use only.
+     *
      * @param motorType
      */
-    public DcMotorImpl(String motorType){
+
+    public DcMotorImpl(String motorType) {
         MOTOR_TYPE = MotorType.Neverest20;
         MOTOR_CONFIGURATION_TYPE = new MotorConfigurationType(MOTOR_TYPE);
+        checkMotorNumberAndUpdateMaster(motorType);
+    }
 
+    public static File filesDir;
+
+    private void checkMotorNumberAndUpdateMaster(String name) {
         try {
-            client = new Ros(new URI("ws://" + rosIp + ":9091"));
-            client.connect();
-        } catch (URISyntaxException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        motorPub = new Topic(client, "/unity/" + motorType + "/input", "ftc_msgs/DcMotorInput");
-        DcMotorInput toSend = new DcMotorInput(power, "");
-        motorPub.publish(toSend);
+            String yourFilePath = filesDir + "/" + "activeConfig.txt";
+            File file = new File(yourFilePath);
+            FileInputStream fin = new FileInputStream(file);
+            int c;
+            String temp = "";
+            while ((c = fin.read()) != -1) {
+                temp = temp + (char) c;
+            }
+            fin.close();
 
-        currentTime = System.currentTimeMillis();
+            StringBuilder sb = new StringBuilder();
+            FileInputStream fis = new FileInputStream(new File(filesDir + "/" + temp + ".txt"));
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader buff = new BufferedReader(isr);
 
-        motorOutputPub = new Topic(client, "/unity/" + motorType + "/output", "ftc_msgs/DcMotorOutput");
-        motorOutputPub.subscribe(new TopicCallback() {
-            @Override
-            public void handleMessage(Message message) {
-                JsonObject data = message.toJsonObject();
-                if(data.getJsonNumber("encoder_data").doubleValue() != 0) {
-                    actualPosition = data.getJsonNumber("encoder_data").doubleValue();
-                    encoderPosition = direction == Direction.REVERSE ? (encoderBasePosition - actualPosition) : -(encoderBasePosition - actualPosition);
+            String line;
+            while ((line = buff.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+
+            fis.close();
+            JSONObject allConfigs = new JSONObject(sb.toString());
+
+            for (int i = 0; i < allConfigs.getJSONArray("devices").length(); i++) {
+                if (name.equals(allConfigs.getJSONArray("devices").get(i).toString())) {
+                    if(i == 0) {
+                        DcMotorMaster.setDcMotor1(this);
+                    } else if(i == 1) {
+                        DcMotorMaster.setDcMotor2(this);
+                    } else if(i == 2) {
+                        DcMotorMaster.setDcMotor3(this);
+                    } else if(i == 3) {
+                        DcMotorMaster.setDcMotor4(this);
+                    } else if(i == 4) {
+                        DcMotorMaster.setDcMotor5(this);
+                    } else if(i == 5) {
+                        DcMotorMaster.setDcMotor6(this);
+                    } else if(i == 6) {
+                        DcMotorMaster.setDcMotor7(this);
+                    } else if(i == 7) {
+                        DcMotorMaster.setDcMotor8(this);
+
+                    }
                 }
             }
-        });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
 
     /**
      * Set mode of operation
+     *
      * @param mode
      */
-    public synchronized void setMode(RunMode mode){
+    public synchronized void setMode(RunMode mode) {
         this.mode = mode;
         power = 0.0;
-        if (mode == RunMode.STOP_AND_RESET_ENCODER){
+        if (mode == RunMode.STOP_AND_RESET_ENCODER) {
             encoderBasePosition = actualPosition;
         }
     }
 
     /**
      * Get mode of operation
+     *
      * @return mode
      */
-    public synchronized RunMode getMode(){ return mode; }
+    public synchronized RunMode getMode() {
+        return mode;
+    }
 
     /**
      * Set logical direction
+     *
      * @param direction the direction to set for this motor
      */
-    public synchronized void setDirection(Direction direction){
+    public synchronized void setDirection(Direction direction) {
         this.direction = direction;
     }
 
     /**
      * Get logical direction
+     *
      * @return direction
      */
-    public synchronized Direction getDirection(){ return direction; }
+    public synchronized Direction getDirection() {
+        return direction;
+    }
 
     /**
      * Get requested power
+     *
      * @return
      */
-    public synchronized double getPower(){ return power; }
+    public synchronized double getPower() {
+        return power;
+    }
 
     /**
      * Set requested power
+     *
      * @param power the new power level of the motor, a value in the interval [-1.0, 1.0]
      */
 
-    long currentTime;
-    int timeInterval = 100;
-
-    public synchronized void setPower(double power){
-        if(System.currentTimeMillis() >= currentTime + timeInterval) {
-            this.power = direction == Direction.REVERSE ? -power : power;
-            publishCmdVel();
-        }
+    public synchronized void setPower(double power) {
+        this.power = direction == Direction.REVERSE ? -power : power;
     }
 
-    
 
     /**
      * Get actual speed
+     *
      * @return actual speed, in ticks per sec
      */
-    protected synchronized double getSpeed(){ return speed; }
+    protected synchronized double getSpeed() {
+        return speed;
+    }
 
     /**
      * Get current position (as number of encoder ticks)
+     *
      * @return number of encoder ticks
      */
-    public synchronized int getCurrentPosition(){
+    public synchronized int getCurrentPosition() {
         return (int) (encoderPosition);
     }
 
     /**
      * For internal use only.
+     *
      * @return
      */
-    public synchronized double getActualPosition(){ return actualPosition; }
+    public synchronized double getActualPosition() {
+        return actualPosition;
+    }
 
     /**
      * For internal use only.
      * Updates motor speed based on current speed, power, and inertia. Then, uses motor speed to update position.
+     *
      * @param milliseconds number of milliseconds since last update
      * @return change in actualPosition
      */
-    public synchronized double update(double milliseconds){
+    public synchronized double update(double milliseconds) {
         if (mode == RunMode.STOP_AND_RESET_ENCODER) return 0.0;
-        else if (mode == RunMode.RUN_TO_POSITION){
-            double targetSpeed = COEFF_PROPORTIONATE * (double)(targetPosition - getCurrentPosition())
+        else if (mode == RunMode.RUN_TO_POSITION) {
+            double targetSpeed = COEFF_PROPORTIONATE * (double) (targetPosition - getCurrentPosition())
                     / MOTOR_TYPE.MAX_TICKS_PER_SECOND;
             double absPower = Math.abs(power);
             targetSpeed = Math.max(-absPower, Math.min(targetSpeed, absPower));
@@ -191,37 +233,43 @@ public class DcMotorImpl implements DcMotor {
         double positionChange = speed * MOTOR_TYPE.MAX_TICKS_PER_SECOND * milliseconds / 1000.0;
         positionChange *= (1.0 + systematicErrorFrac + randomErrorFrac * random.nextGaussian());
         if (direction == Direction.FORWARD && MOTOR_TYPE.REVERSED ||
-                direction == Direction.REVERSE && !MOTOR_TYPE.REVERSED) positionChange = -positionChange;
+                direction == Direction.REVERSE && !MOTOR_TYPE.REVERSED)
+            positionChange = -positionChange;
         actualPosition += positionChange;
         return positionChange;
     }
 
     /**
      * For internal use only.
+     *
      * @param rdmErrFrac
      */
-    public synchronized void setRandomErrorFrac(double rdmErrFrac){
+    public synchronized void setRandomErrorFrac(double rdmErrFrac) {
         randomErrorFrac = rdmErrFrac;
     }
 
     /**
      * For internal use only.
+     *
      * @param sysErrFrac
      */
-    public synchronized void setSystematicErrorFrac(double sysErrFrac) { systematicErrorFrac = sysErrFrac; }
+    public synchronized void setSystematicErrorFrac(double sysErrFrac) {
+        systematicErrorFrac = sysErrFrac;
+    }
 
     /**
      * For internal use only.
+     *
      * @param in
      */
-    public synchronized void setInertia(double in){
+    public synchronized void setInertia(double in) {
         if (in < 0) inertia = 0.0;
         else if (in > 0.99) inertia = 0.99;
         else inertia = in;
     }
 
     //For internal use only: for stopping and resetting motor between op mode runs
-    public synchronized void stopAndReset(){
+    public synchronized void stopAndReset() {
         power = 0.0;
         speed = 0.0;
         actualPosition = 0.0;
@@ -230,12 +278,12 @@ public class DcMotorImpl implements DcMotor {
     }
 
     //Set target position for RUN_TO_POSITION mode
-    public synchronized void setTargetPosition(int pos){
+    public synchronized void setTargetPosition(int pos) {
         targetPosition = pos;
     }
 
     //Get target position
-    public synchronized  int getTargetPosition(){
+    public synchronized int getTargetPosition() {
         return targetPosition;
     }
 
@@ -243,23 +291,23 @@ public class DcMotorImpl implements DcMotor {
      * Indicates whether approaching target in RUN_TO_POSITION mode
      * Result will become false when: ticks are nearly at the target AND speed is very slow
      */
-    public synchronized boolean isBusy(){
+    public synchronized boolean isBusy() {
         final double MAX_ROT_OFFSET = 0.02;
         int pos = getCurrentPosition();
-        boolean atTarget = Math.abs(pos-targetPosition)/MOTOR_TYPE.TICKS_PER_ROTATION < MAX_ROT_OFFSET;
+        boolean atTarget = Math.abs(pos - targetPosition) / MOTOR_TYPE.TICKS_PER_ROTATION < MAX_ROT_OFFSET;
         boolean almostStopped = Math.abs(speed) / (COEFF_PROPORTIONATE * MOTOR_TYPE.TICKS_PER_ROTATION) < MAX_ROT_OFFSET;
         return mode == RunMode.RUN_TO_POSITION && Math.abs(power) > 0.0001 && (!atTarget || !almostStopped);
     }
 
-    public synchronized void setZeroPowerBehavior(ZeroPowerBehavior zeroPowerBehavior){
+    public synchronized void setZeroPowerBehavior(ZeroPowerBehavior zeroPowerBehavior) {
         this.zeroPowerBehavior = zeroPowerBehavior;
     }
 
-    public synchronized ZeroPowerBehavior getZeroPowerBehavior(){
+    public synchronized ZeroPowerBehavior getZeroPowerBehavior() {
         return this.zeroPowerBehavior;
     }
 
-    public MotorConfigurationType getMotorType(){
+    public MotorConfigurationType getMotorType() {
         return MOTOR_CONFIGURATION_TYPE;
     }
 }

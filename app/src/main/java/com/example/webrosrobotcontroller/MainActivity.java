@@ -30,8 +30,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.qualcomm.robotcore.DcMotorMaster;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.basicwebsocket.Ros;
@@ -76,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         canCheckForGamepad = true;
+        DcMotorImpl.filesDir = this.getFilesDir();
         launchGamepadThread();
         populateClassSelector();
         progressBar = findViewById(R.id.loadingSign);
@@ -125,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 final int status = (Integer) v.getTag();
                 if (status == 0) {
                     if (!robotVM_IPAddress.getText().toString().equals("")) {
-                        DcMotorImpl.rosIp = robotVM_IPAddress.getText().toString();
+                        DcMotorMaster.rosIp = robotVM_IPAddress.getText().toString();
                         rosIp = robotVM_IPAddress.getText().toString();
                     }
                     try {
@@ -227,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorImpl.rosIp, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorMaster.rosIp, Toast.LENGTH_SHORT).show();
                                 Button initStartButton = (Button) findViewById(R.id.initStartButton);
                                 initStartButton.setEnabled(true);
                                 initStartButton.setTag(0);
@@ -313,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception ignore) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorImpl.rosIp, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorMaster.rosIp, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }

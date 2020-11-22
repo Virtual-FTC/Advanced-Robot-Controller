@@ -1,0 +1,137 @@
+package com.qualcomm.robotcore;
+
+import com.qualcomm.robotcore.hardware.DcMotorImpl;
+import com.qualcomm.robotcore.hardware.basicwebsocket.Ros;
+import com.qualcomm.robotcore.hardware.basicwebsocket.Topic;
+import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.DcMotorInput;
+import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.MotorInputs;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+
+public class DcMotorMaster {
+
+    /**
+     * DcMotorImpl Objects
+     */
+
+    private static DcMotorImpl motorImpl1;
+    private static DcMotorImpl motorImpl2;
+    private static DcMotorImpl motorImpl3;
+    private static DcMotorImpl motorImpl4;
+    private static DcMotorImpl motorImpl5;
+    private static DcMotorImpl motorImpl6;
+    private static DcMotorImpl motorImpl7;
+    private static DcMotorImpl motorImpl8;
+
+    public static void setDcMotor1(DcMotorImpl dcMotor) {
+        motorImpl1 = dcMotor;
+    }
+    public static void setDcMotor2(DcMotorImpl dcMotor) {
+        motorImpl2 = dcMotor;
+    }
+    public static void setDcMotor3(DcMotorImpl dcMotor) {
+        motorImpl3 = dcMotor;
+    }
+    public static void setDcMotor4(DcMotorImpl dcMotor) {
+        motorImpl4 = dcMotor;
+    }
+    public static void setDcMotor5(DcMotorImpl dcMotor) {
+        motorImpl5 = dcMotor;
+    }
+    public static void setDcMotor6(DcMotorImpl dcMotor) {
+        motorImpl6 = dcMotor;
+    }
+    public static void setDcMotor7(DcMotorImpl dcMotor) {
+        motorImpl7 = dcMotor;
+    }
+    public static void setDcMotor8(DcMotorImpl dcMotor) {
+        motorImpl8 = dcMotor;
+    }
+
+    /**
+     * ROS Client Connection / Thread Starter
+     */
+
+    private static DcMotorInput motor1;
+    private static DcMotorInput motor2;
+    private static DcMotorInput motor3;
+    private static DcMotorInput motor4;
+    private static DcMotorInput motor5;
+    private static DcMotorInput motor6;
+    private static DcMotorInput motor7;
+    private static DcMotorInput motor8;
+
+    public static String rosIp = "35.232.174.143";
+    private static Ros client = null;
+    private static Topic motorPub;
+    private static Topic motorOutputPub;
+
+    public static void start() {
+        try {
+            client = new Ros(new URI("ws://" + rosIp + ":9093"));
+            client.connect();
+        } catch (URISyntaxException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        motorPub = new Topic(client, "/unity/motors/input", "ftc_msgs/MotorInputs");
+        MotorInputs toSend = new MotorInputs();
+        motorPub.publish(toSend);
+
+        currentTime = System.currentTimeMillis();
+
+//        motorOutputPub = new Topic(client, "/unity/motors/output", "ftc_msgs/MotorOutputs");
+//        motorOutputPub.subscribe(new TopicCallback() {
+//            @Override
+//            public void handleMessage(Message message) {
+//                JsonObject data = message.toJsonObject();
+//                if(data.getJsonNumber("encoder_data").doubleValue() != 0) {
+//                    actualPosition = data.getJsonNumber("encoder_data").doubleValue();
+//                    encoderPosition = direction == DcMotorSimple.Direction.REVERSE ? (encoderBasePosition - actualPosition) : -(encoderBasePosition - actualPosition);
+//                }
+//            }
+//        });
+        startMotorInputThread();
+    }
+
+
+    /**
+     * Motor Input Functions
+     */
+
+    private static long currentTime;
+    private static boolean canRunMotorInputThread = false;
+
+    private static void startMotorInputThread() {
+        canRunMotorInputThread = true;
+        Thread motorInputThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                currentTime = System.currentTimeMillis();
+                while(canRunMotorInputThread) {
+                    // send motor input every 15 milliseconds
+                    if(System.currentTimeMillis() >= currentTime + 15) {
+                        motor1 = new DcMotorInput(motorImpl1.power, "");
+                        motor2 = new DcMotorInput(motorImpl2.power, "");
+                        motor3 = new DcMotorInput(motorImpl3.power, "");
+                        motor4 = new DcMotorInput(motorImpl4.power, "");
+                        motor5 = new DcMotorInput(motorImpl5.power, "");
+                        motor6 = new DcMotorInput(motorImpl6.power, "");
+                        motor7 = new DcMotorInput(motorImpl7.power, "");
+                        motor8 = new DcMotorInput(motorImpl8.power, "");
+                        publishCmdVel();
+                    }
+                }
+            }
+        });
+        motorInputThread.setName("MotorInputThread");
+        motorInputThread.setPriority(Thread.MAX_PRIORITY);
+        motorInputThread.start();
+    }
+
+    private static void publishCmdVel(){
+        MotorInputs motorInputs = new MotorInputs(motor1, motor2, motor3, motor4, motor5, motor6, motor7, motor8);
+        motorPub.publish(motorInputs);
+    }
+}
