@@ -44,10 +44,10 @@ public class DcMotorImpl implements DcMotor {
     private double speed = 0.0;
 
     //actual position of motor
-    private double actualPosition = 0.0;
+    public double actualPosition = 0.0;
 
     //position to use as baseline for encoder tick calculation
-    private double encoderBasePosition = 0.0;
+    public double encoderBasePosition = 0.0;
 
     private double randomErrorFrac = 0.0;
     private double systematicErrorFrac = 0.0;

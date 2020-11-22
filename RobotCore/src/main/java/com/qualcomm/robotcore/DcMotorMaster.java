@@ -1,13 +1,18 @@
 package com.qualcomm.robotcore;
 
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.basicwebsocket.Ros;
 import com.qualcomm.robotcore.hardware.basicwebsocket.Topic;
+import com.qualcomm.robotcore.hardware.basicwebsocket.callback.TopicCallback;
+import com.qualcomm.robotcore.hardware.basicwebsocket.messages.Message;
 import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.DcMotorInput;
 import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.MotorInputs;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import javax.json.JsonObject;
 
 public class DcMotorMaster {
 
@@ -81,17 +86,17 @@ public class DcMotorMaster {
 
         currentTime = System.currentTimeMillis();
 
-//        motorOutputPub = new Topic(client, "/unity/motors/output", "ftc_msgs/MotorOutputs");
-//        motorOutputPub.subscribe(new TopicCallback() {
-//            @Override
-//            public void handleMessage(Message message) {
-//                JsonObject data = message.toJsonObject();
-//                if(data.getJsonNumber("encoder_data").doubleValue() != 0) {
-//                    actualPosition = data.getJsonNumber("encoder_data").doubleValue();
-//                    encoderPosition = direction == DcMotorSimple.Direction.REVERSE ? (encoderBasePosition - actualPosition) : -(encoderBasePosition - actualPosition);
-//                }
-//            }
-//        });
+        motorOutputPub = new Topic(client, "/unity/motors/output", "ftc_msgs/MotorOutputs");
+        motorOutputPub.subscribe(new TopicCallback() {
+            @Override
+            public void handleMessage(Message message) {
+                JsonObject data = message.toJsonObject();
+                if(data.getJsonNumber("encoder_data").doubleValue() != 0) {
+                    motorImpl1.actualPosition = data.getJsonNumber("encoder_data").doubleValue();
+                    motorImpl1.encoderPosition = motorImpl1.direction == DcMotorSimple.Direction.REVERSE ? (motorImpl1.encoderBasePosition - motorImpl1.actualPosition) : -(motorImpl1.encoderBasePosition - motorImpl1.actualPosition);
+                }
+            }
+        });
         startMotorInputThread();
     }
 
