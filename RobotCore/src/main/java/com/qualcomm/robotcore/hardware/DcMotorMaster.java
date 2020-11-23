@@ -74,7 +74,7 @@ public class DcMotorMaster {
 
     public static void start() {
         try {
-            client = new Ros(new URI("ws://" + rosIp + ":9091"));
+            client = new Ros(new URI("udp://" + rosIp + ":9091"));
             client.connect();
         } catch (URISyntaxException | InterruptedException e) {
             e.printStackTrace();
