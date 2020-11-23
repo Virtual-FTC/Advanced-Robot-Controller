@@ -1,25 +1,16 @@
 package com.qualcomm.robotcore.hardware;
 
-import com.qualcomm.robotcore.DcMotorMaster;
-import com.qualcomm.robotcore.hardware.basicwebsocket.Ros;
-import com.qualcomm.robotcore.hardware.basicwebsocket.Topic;
-import com.qualcomm.robotcore.hardware.basicwebsocket.callback.TopicCallback;
-import com.qualcomm.robotcore.hardware.basicwebsocket.messages.Message;
-import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.DcMotorInput;
 import com.qualcomm.robotcore.hardware.configuration.MotorType;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+//import org.json.JSONObject;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.StringReader;
 import java.util.Random;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 /**
  * Implementation of the DcMotor interface.
@@ -71,33 +62,37 @@ public class DcMotorImpl implements DcMotor {
 
     public static File filesDir;
 
+    public static String activeConfigContent = "";
+
     private void checkMotorNumberAndUpdateMaster(String name) {
         try {
-            String yourFilePath = filesDir + "/" + "activeConfig.txt";
-            File file = new File(yourFilePath);
-            FileInputStream fin = new FileInputStream(file);
-            int c;
-            String temp = "";
-            while ((c = fin.read()) != -1) {
-                temp = temp + (char) c;
-            }
-            fin.close();
+//            String yourFilePath = filesDir + "/" + "activeConfig.txt";
+//            File file = new File(yourFilePath);
+//            FileInputStream fin = new FileInputStream(file);
+//            int c;
+//            String temp = "";
+//            while ((c = fin.read()) != -1) {
+//                temp = temp + (char) c;
+//            }
+//            fin.close();
+//
+//            StringBuilder sb = new StringBuilder();
+//            FileInputStream fis = new FileInputStream(new File(filesDir + "/" + temp + ".txt"));
+//            InputStreamReader isr = new InputStreamReader(fis);
+//            BufferedReader buff = new BufferedReader(isr);
+//
+//            String line;
+//            while ((line = buff.readLine()) != null) {
+//                sb.append(line + "\n");
+//            }
+//            fis.close();
+            JsonReader jsonReader = Json.createReader(new StringReader(activeConfigContent));
+            JsonObject object = jsonReader.readObject();
+            jsonReader.close();
 
-            StringBuilder sb = new StringBuilder();
-            FileInputStream fis = new FileInputStream(new File(filesDir + "/" + temp + ".txt"));
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader buff = new BufferedReader(isr);
 
-            String line;
-            while ((line = buff.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-
-            fis.close();
-            JSONObject allConfigs = new JSONObject(sb.toString());
-
-            for (int i = 0; i < allConfigs.getJSONArray("devices").length(); i++) {
-                if (name.equals(allConfigs.getJSONArray("devices").get(i).toString())) {
+            for (int i = 0; i < object.getJsonArray("devices").size(); i++) {
+                if (name.equals(object.getJsonArray("devices").get(i).toString().replace("\"", ""))) {
                     if(i == 0) {
                         DcMotorMaster.setDcMotor1(this);
                     } else if(i == 1) {
@@ -114,7 +109,7 @@ public class DcMotorImpl implements DcMotor {
                         DcMotorMaster.setDcMotor7(this);
                     } else if(i == 7) {
                         DcMotorMaster.setDcMotor8(this);
-
+                        DcMotorMaster.start();
                     }
                 }
             }

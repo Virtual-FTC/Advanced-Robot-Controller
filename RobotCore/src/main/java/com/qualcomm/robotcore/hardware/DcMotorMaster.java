@@ -1,4 +1,4 @@
-package com.qualcomm.robotcore;
+package com.qualcomm.robotcore.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -74,7 +74,7 @@ public class DcMotorMaster {
 
     public static void start() {
         try {
-            client = new Ros(new URI("ws://" + rosIp + ":9093"));
+            client = new Ros(new URI("ws://" + rosIp + ":9091"));
             client.connect();
         } catch (URISyntaxException | InterruptedException e) {
             e.printStackTrace();
@@ -86,17 +86,17 @@ public class DcMotorMaster {
 
         currentTime = System.currentTimeMillis();
 
-        motorOutputPub = new Topic(client, "/unity/motors/output", "ftc_msgs/MotorOutputs");
-        motorOutputPub.subscribe(new TopicCallback() {
-            @Override
-            public void handleMessage(Message message) {
-                JsonObject data = message.toJsonObject();
-                if(data.getJsonNumber("encoder_data").doubleValue() != 0) {
-                    motorImpl1.actualPosition = data.getJsonNumber("encoder_data").doubleValue();
-                    motorImpl1.encoderPosition = motorImpl1.direction == DcMotorSimple.Direction.REVERSE ? (motorImpl1.encoderBasePosition - motorImpl1.actualPosition) : -(motorImpl1.encoderBasePosition - motorImpl1.actualPosition);
-                }
-            }
-        });
+//        motorOutputPub = new Topic(client, "/unity/motors/output", "ftc_msgs/MotorOutputs");
+//        motorOutputPub.subscribe(new TopicCallback() {
+//            @Override
+//            public void handleMessage(Message message) {
+//                JsonObject data = message.toJsonObject();
+//                if(data.getJsonNumber("encoder_data").doubleValue() != 0) {
+//                    motorImpl1.actualPosition = data.getJsonNumber("encoder_data").doubleValue();
+//                    motorImpl1.encoderPosition = motorImpl1.direction == DcMotorSimple.Direction.REVERSE ? (motorImpl1.encoderBasePosition - motorImpl1.actualPosition) : -(motorImpl1.encoderBasePosition - motorImpl1.actualPosition);
+//                }
+//            }
+//        });
         startMotorInputThread();
     }
 
@@ -117,6 +117,7 @@ public class DcMotorMaster {
                 while(canRunMotorInputThread) {
                     // send motor input every 15 milliseconds
                     if(System.currentTimeMillis() >= currentTime + 15) {
+                        currentTime = System.currentTimeMillis();
                         motor1 = new DcMotorInput(motorImpl1.power, "");
                         motor2 = new DcMotorInput(motorImpl2.power, "");
                         motor3 = new DcMotorInput(motorImpl3.power, "");

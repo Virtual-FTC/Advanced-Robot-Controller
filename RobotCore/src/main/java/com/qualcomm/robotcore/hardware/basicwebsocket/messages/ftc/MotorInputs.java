@@ -26,14 +26,14 @@ public class MotorInputs extends Message {
     public MotorInputs(DcMotorInput motor1, DcMotorInput motor2, DcMotorInput motor3, DcMotorInput motor4, DcMotorInput motor5, DcMotorInput motor6, DcMotorInput motor7, DcMotorInput motor8) {
         // build the JSON object
         super(Json.createObjectBuilder()
-                        .add("motor1", motor1.toJsonObject())
-                        .add("motor2", motor2.toJsonObject())
-                        .add("motor3", motor3.toJsonObject())
-                        .add("motor4", motor4.toJsonObject())
-                        .add("motor5", motor5.toJsonObject())
-                        .add("motor6", motor6.toJsonObject())
-                        .add("motor7", motor7.toJsonObject())
-                        .add("motor8", motor8.toJsonObject()).build(),
+                        .add("motor_one", motor1.toJsonObject())
+                        .add("motor_two", motor2.toJsonObject())
+                        .add("motor_three", motor3.toJsonObject())
+                        .add("motor_four", motor4.toJsonObject())
+                        .add("motor_five", motor5.toJsonObject())
+                        .add("motor_six", motor6.toJsonObject())
+                        .add("motor_seven", motor7.toJsonObject())
+                        .add("motor_eight", motor8.toJsonObject()).build(),
                 MotorInputs.TYPE);
         this.motor1 = motor1;
         this.motor2 = motor2;
@@ -94,29 +94,29 @@ public class MotorInputs extends Message {
 
     public static MotorInputs fromJsonObject(JsonObject jsonObject) {
         // check the fields
-        DcMotorInput motor1 = jsonObject.containsKey("motor1") ? DcMotorInput
-                .fromJsonObject(jsonObject.getJsonObject("motor1"))
+        DcMotorInput motor1 = jsonObject.containsKey("motor_one") ? DcMotorInput
+                .fromJsonObject(jsonObject.getJsonObject("motor_one"))
                 : new DcMotorInput();
-        DcMotorInput motor2 = jsonObject.containsKey("motor2") ? DcMotorInput
-                .fromJsonObject(jsonObject.getJsonObject("motor2"))
+        DcMotorInput motor2 = jsonObject.containsKey("motor_two") ? DcMotorInput
+                .fromJsonObject(jsonObject.getJsonObject("motor_two"))
                 : new DcMotorInput();
-        DcMotorInput motor3 = jsonObject.containsKey("motor3") ? DcMotorInput
-                .fromJsonObject(jsonObject.getJsonObject("motor3"))
+        DcMotorInput motor3 = jsonObject.containsKey("motor_three") ? DcMotorInput
+                .fromJsonObject(jsonObject.getJsonObject("motor_three"))
                 : new DcMotorInput();
-        DcMotorInput motor4 = jsonObject.containsKey("motor4") ? DcMotorInput
-                .fromJsonObject(jsonObject.getJsonObject("motor4"))
+        DcMotorInput motor4 = jsonObject.containsKey("motor_four") ? DcMotorInput
+                .fromJsonObject(jsonObject.getJsonObject("motor_four"))
                 : new DcMotorInput();
-        DcMotorInput motor5 = jsonObject.containsKey("motor5") ? DcMotorInput
-                .fromJsonObject(jsonObject.getJsonObject("motor5"))
+        DcMotorInput motor5 = jsonObject.containsKey("motor_five") ? DcMotorInput
+                .fromJsonObject(jsonObject.getJsonObject("motor_five"))
                 : new DcMotorInput();
-        DcMotorInput motor6 = jsonObject.containsKey("motor6") ? DcMotorInput
-                .fromJsonObject(jsonObject.getJsonObject("motor6"))
+        DcMotorInput motor6 = jsonObject.containsKey("motor_six") ? DcMotorInput
+                .fromJsonObject(jsonObject.getJsonObject("motor_six"))
                 : new DcMotorInput();
-        DcMotorInput motor7 = jsonObject.containsKey("motor7") ? DcMotorInput
-                .fromJsonObject(jsonObject.getJsonObject("motor7"))
+        DcMotorInput motor7 = jsonObject.containsKey("motor_seven") ? DcMotorInput
+                .fromJsonObject(jsonObject.getJsonObject("motor_seven"))
                 : new DcMotorInput();
-        DcMotorInput motor8 = jsonObject.containsKey("motor8") ? DcMotorInput
-                .fromJsonObject(jsonObject.getJsonObject("motor8"))
+        DcMotorInput motor8 = jsonObject.containsKey("motor_eight") ? DcMotorInput
+                .fromJsonObject(jsonObject.getJsonObject("motor_eight"))
                 : new DcMotorInput();
 
         return new MotorInputs(motor1, motor2, motor3, motor4, motor5, motor6, motor7, motor8);

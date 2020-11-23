@@ -1,56 +1,40 @@
 package com.example.webrosrobotcontroller;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.qualcomm.robotcore.DcMotorMaster;
+import com.qualcomm.robotcore.hardware.DcMotorMaster;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.basicwebsocket.Ros;
 import com.qualcomm.robotcore.hardware.basicwebsocket.Topic;
-
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 
 import dalvik.system.DexFile;
 
@@ -93,24 +77,39 @@ public class MainActivity extends AppCompatActivity {
 
         getMenuInflater().inflate(R.menu.menu, topMenu);
 
+        try {
+            String yourFilePath = MainActivity.this.getFilesDir() + "/" + "activeConfig.txt";
+            File file = new File(yourFilePath);
+            FileInputStream fin = new FileInputStream(file);
+            int c;
+            String temp = "";
+            while ((c = fin.read()) != -1) {
+                temp = temp + (char) c;
+            }
+            fin.close();
+            activeConfigurationName = temp;
+
+
+            StringBuilder sb = new StringBuilder();
+            FileInputStream fis = new FileInputStream(new File(getFilesDir() + "/" + temp + ".txt"));
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader buff = new BufferedReader(isr);
+            String line;
+            while ((line = buff.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            fis.close();
+
+            DcMotorImpl.activeConfigContent = sb.toString();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            activeConfigurationName = "No Config Set";
+        }
+
         topMenu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                try {
-                    String yourFilePath = MainActivity.this.getFilesDir() + "/" + "activeConfig.txt";
-                    File file = new File(yourFilePath);
-                    FileInputStream fin = new FileInputStream(file);
-                    int c;
-                    String temp = "";
-                    while ((c = fin.read()) != -1) {
-                        temp = temp + (char) c;
-                    }
-                    fin.close();
-                    activeConfigurationName = temp;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    activeConfigurationName = "No Config Set";
-                }
                 canCheckForGamepad = false;
                 Intent intent = new Intent(MainActivity.this, ConfigurationActivity.class);
                 intent.putExtra("ACTIVE_CONFIGURATION_NAME", activeConfigurationName);
@@ -140,13 +139,13 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    try {
-                        client = new Ros(new URI("ws://" + rosIp + ":9091"));
-                        client.connect();
-                        configPub = new Topic(client, "/config/motors", "std_msgs/String");
-                        configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(getConfigurationFromYAMLFile()));
-                    } catch (Exception ignore) {
-                    }
+//                    try {
+//                        client = new Ros(new URI("ws://" + rosIp + ":9091"));
+//                        client.connect();
+//                        configPub = new Topic(client, "/config/motors", "std_msgs/String");
+//                        configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(getConfigurationFromYAMLFile()));
+//                    } catch (Exception ignore) {
+//                    }
 
 
                     initStartButton.setText("START");
