@@ -1,7 +1,5 @@
 package com.qualcomm.robotcore.hardware.basicwebsocket;
 
-import org.java_websocket.handshake.ServerHandshake;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -30,7 +28,6 @@ public class UDPSocket {
 
     public void send(String send) {
         try {
-            System.out.println("message: " + send);
             DatagramPacket message = new DatagramPacket(send.getBytes(), send.getBytes().length, address, port);
             socket.send(message);
         } catch (IOException e) {

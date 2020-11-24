@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.qualcomm.robotcore.hardware.DcMotorImpl;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
@@ -86,14 +88,14 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
                     JSONObject jsonObject = new JSONObject();
                     JSONArray jsonArray = new JSONArray();
 
-                    jsonArray.put("motor1");
-                    jsonArray.put("motor2");
-                    jsonArray.put("motor3");
-                    jsonArray.put("motor4");
-                    jsonArray.put("motor5");
-                    jsonArray.put("motor6");
-                    jsonArray.put("motor7");
-                    jsonArray.put("motor8");
+                    jsonArray.put("frontLeft");
+                    jsonArray.put("frontRight");
+                    jsonArray.put("backLeft");
+                    jsonArray.put("backRight");
+                    jsonArray.put("intake");
+                    jsonArray.put("hopper");
+                    jsonArray.put("leftShooter");
+                    jsonArray.put("rightShooter");
 
                     jsonObject.put("devices", jsonArray);
                     writeFileOnInternalStorage(ConfigurationActivity.this, "defaultRobot" + ".txt", jsonObject.toString());
@@ -239,6 +241,23 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
                             String newActivityConfigFile = "[{\"frc\": \"" + motor1Name + "\", \"sim\": \"motor1\"},{\"frc\": \"" + motor2Name + "\", \"sim\": \"motor2\"},{\"frc\": \"" + motor3Name + "\", \"sim\": \"motor3\"},{\"frc\": \"" + motor4Name + "\", \"sim\": \"motor4\"},{\"frc\": \"" + motor5Name + "\", \"sim\": \"motor5\"},{\"frc\": \"" + motor6Name + "\", \"sim\": \"motor6\"},{\"frc\": \"" + motor7Name + "\", \"sim\": \"motor7\"},{\"frc\": \"" + motor8Name + "\", \"sim\": \"motor8\"}]";
 
                             writeFileOnInternalStorage(getContext(), "activeConfiguration.txt", newActivityConfigFile);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        try {
+                            StringBuilder sb = new StringBuilder();
+                            FileInputStream fis = new FileInputStream(new File(getFilesDir() + "/" + activeConfigurationName + ".txt"));
+                            InputStreamReader isr = new InputStreamReader(fis);
+                            BufferedReader buff = new BufferedReader(isr);
+                            String line;
+                            while ((line = buff.readLine()) != null) {
+                                sb.append(line + "\n");
+                            }
+                            fis.close();
+
+                            DcMotorImpl.activeConfigContent = sb.toString();
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

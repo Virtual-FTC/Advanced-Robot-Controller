@@ -56,6 +56,10 @@ public class RosUDP {
         this.udpRos.connect();
     }
 
+    public void disconnect() {
+        this.udpRos.disconnect();
+    }
+
     /**
      * Get the next unique ID number for this connection.
      *

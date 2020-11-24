@@ -231,7 +231,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:layout_centerVertical="true"
-                    android:hint="collection" />
+                    android:hint="intake" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -256,7 +256,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:layout_centerVertical="true"
-                    android:hint="conveyor" />
+                    android:hint="hopper" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -281,7 +281,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:layout_centerVertical="true"
-                    android:hint="leftLauncher" />
+                    android:hint="leftShooter" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -306,7 +306,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:layout_centerVertical="true"
-                    android:hint="rightLauncher" />
+                    android:hint="rightShooter" />
 
                 <TextView
                     android:layout_width="wrap_content"

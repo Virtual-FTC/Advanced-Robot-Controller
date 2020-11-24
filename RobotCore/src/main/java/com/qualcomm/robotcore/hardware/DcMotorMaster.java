@@ -82,7 +82,7 @@ public class DcMotorMaster {
     private static DcMotorInput motor8;
 
     public static String rosIp = "35.232.174.143";
-    private static RosUDP client = null;
+    public static RosUDP client = null;
     private static UdpTopic motorPub;
     private static UdpTopic motorOutputPub;
     private static DatagramSocket socket;
@@ -92,8 +92,6 @@ public class DcMotorMaster {
         client.connect();
 
         motorPub = new UdpTopic(client, "/unity/motors/input", "ftc_msgs/MotorInputs");
-        MotorInputs toSend = new MotorInputs();
-        motorPub.publish(toSend);
 
         currentTime = System.currentTimeMillis();
 
