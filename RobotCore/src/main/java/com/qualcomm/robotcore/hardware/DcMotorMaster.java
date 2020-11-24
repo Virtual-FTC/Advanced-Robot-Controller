@@ -3,12 +3,19 @@ package com.qualcomm.robotcore.hardware;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.basicwebsocket.Ros;
+import com.qualcomm.robotcore.hardware.basicwebsocket.RosUDP;
 import com.qualcomm.robotcore.hardware.basicwebsocket.Topic;
+import com.qualcomm.robotcore.hardware.basicwebsocket.UdpTopic;
 import com.qualcomm.robotcore.hardware.basicwebsocket.callback.TopicCallback;
 import com.qualcomm.robotcore.hardware.basicwebsocket.messages.Message;
 import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.DcMotorInput;
 import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.MotorInputs;
+import com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.Float32;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -32,24 +39,31 @@ public class DcMotorMaster {
     public static void setDcMotor1(DcMotorImpl dcMotor) {
         motorImpl1 = dcMotor;
     }
+
     public static void setDcMotor2(DcMotorImpl dcMotor) {
         motorImpl2 = dcMotor;
     }
+
     public static void setDcMotor3(DcMotorImpl dcMotor) {
         motorImpl3 = dcMotor;
     }
+
     public static void setDcMotor4(DcMotorImpl dcMotor) {
         motorImpl4 = dcMotor;
     }
+
     public static void setDcMotor5(DcMotorImpl dcMotor) {
         motorImpl5 = dcMotor;
     }
+
     public static void setDcMotor6(DcMotorImpl dcMotor) {
         motorImpl6 = dcMotor;
     }
+
     public static void setDcMotor7(DcMotorImpl dcMotor) {
         motorImpl7 = dcMotor;
     }
+
     public static void setDcMotor8(DcMotorImpl dcMotor) {
         motorImpl8 = dcMotor;
     }
@@ -68,25 +82,23 @@ public class DcMotorMaster {
     private static DcMotorInput motor8;
 
     public static String rosIp = "35.232.174.143";
-    private static Ros client = null;
-    private static Topic motorPub;
-    private static Topic motorOutputPub;
+    private static RosUDP client = null;
+    private static UdpTopic motorPub;
+    private static UdpTopic motorOutputPub;
+    private static DatagramSocket socket;
 
     public static void start() {
-        try {
-            client = new Ros(new URI("udp://" + rosIp + ":9091"));
-            client.connect();
-        } catch (URISyntaxException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        client = new RosUDP(rosIp, 9093);
+        client.connect();
 
-        motorPub = new Topic(client, "/unity/motors/input", "ftc_msgs/MotorInputs");
+        motorPub = new UdpTopic(client, "/unity/motors/input", "ftc_msgs/MotorInputs");
         MotorInputs toSend = new MotorInputs();
         motorPub.publish(toSend);
 
         currentTime = System.currentTimeMillis();
 
-//        motorOutputPub = new Topic(client, "/unity/motors/output", "ftc_msgs/MotorOutputs");
+
+        motorOutputPub = new UdpTopic(client, "/unity/motors/output", "ftc_msgs/MotorOutputs");
 //        motorOutputPub.subscribe(new TopicCallback() {
 //            @Override
 //            public void handleMessage(Message message) {
@@ -97,6 +109,7 @@ public class DcMotorMaster {
 //                }
 //            }
 //        });
+
         startMotorInputThread();
     }
 
@@ -114,9 +127,9 @@ public class DcMotorMaster {
             @Override
             public void run() {
                 currentTime = System.currentTimeMillis();
-                while(canRunMotorInputThread) {
+                while (canRunMotorInputThread) {
                     // send motor input every 15 milliseconds
-                    if(System.currentTimeMillis() >= currentTime + 15) {
+                    if (System.currentTimeMillis() >= currentTime + 1000) {
                         currentTime = System.currentTimeMillis();
                         motor1 = new DcMotorInput(motorImpl1.power, "");
                         motor2 = new DcMotorInput(motorImpl2.power, "");
@@ -126,7 +139,7 @@ public class DcMotorMaster {
                         motor6 = new DcMotorInput(motorImpl6.power, "");
                         motor7 = new DcMotorInput(motorImpl7.power, "");
                         motor8 = new DcMotorInput(motorImpl8.power, "");
-                        publishCmdVel();
+                        publishCmd();
                     }
                 }
             }
@@ -136,7 +149,7 @@ public class DcMotorMaster {
         motorInputThread.start();
     }
 
-    private static void publishCmdVel(){
+    private static void publishCmd() {
         MotorInputs motorInputs = new MotorInputs(motor1, motor2, motor3, motor4, motor5, motor6, motor7, motor8);
         motorPub.publish(motorInputs);
     }
