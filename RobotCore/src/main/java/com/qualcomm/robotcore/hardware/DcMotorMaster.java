@@ -1,23 +1,11 @@
 package com.qualcomm.robotcore.hardware;
 
-import com.qualcomm.robotcore.hardware.DcMotorImpl;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.basicwebsocket.Ros;
 import com.qualcomm.robotcore.hardware.basicwebsocket.RosUDP;
-import com.qualcomm.robotcore.hardware.basicwebsocket.Topic;
 import com.qualcomm.robotcore.hardware.basicwebsocket.UdpTopic;
 import com.qualcomm.robotcore.hardware.basicwebsocket.callback.TopicCallback;
 import com.qualcomm.robotcore.hardware.basicwebsocket.messages.Message;
 import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.DcMotorInput;
 import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.MotorInputs;
-import com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.Float32;
-
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.json.JsonObject;
 
@@ -85,10 +73,10 @@ public class DcMotorMaster {
     public static RosUDP client = null;
     private static UdpTopic motorPub;
     private static UdpTopic motorOutputPub;
-    private static DatagramSocket socket;
+
 
     public static void start() {
-        client = new RosUDP(rosIp, 9093);
+        client = new RosUDP(rosIp, 9092);
         client.connect();
 
         motorPub = new UdpTopic(client, "/unity/motors/input", "ftc_msgs/MotorInputs");
@@ -97,16 +85,16 @@ public class DcMotorMaster {
 
 
         motorOutputPub = new UdpTopic(client, "/unity/motors/output", "ftc_msgs/MotorOutputs");
-//        motorOutputPub.subscribe(new TopicCallback() {
-//            @Override
-//            public void handleMessage(Message message) {
-//                JsonObject data = message.toJsonObject();
-//                if(data.getJsonNumber("encoder_data").doubleValue() != 0) {
-//                    motorImpl1.actualPosition = data.getJsonNumber("encoder_data").doubleValue();
-//                    motorImpl1.encoderPosition = motorImpl1.direction == DcMotorSimple.Direction.REVERSE ? (motorImpl1.encoderBasePosition - motorImpl1.actualPosition) : -(motorImpl1.encoderBasePosition - motorImpl1.actualPosition);
-//                }
-//            }
-//        });
+        motorOutputPub.subscribe(new TopicCallback() {
+            @Override
+            public void handleMessage(Message message) {
+                JsonObject data = message.toJsonObject();
+                if (data.getJsonNumber("encoder_data").doubleValue() != 0) {
+                    motorImpl1.actualPosition = data.getJsonNumber("encoder_data").doubleValue();
+                    motorImpl1.encoderPosition = motorImpl1.direction == DcMotorSimple.Direction.REVERSE ? (motorImpl1.encoderBasePosition - motorImpl1.actualPosition) : -(motorImpl1.encoderBasePosition - motorImpl1.actualPosition);
+                }
+            }
+        });
 
         startMotorInputThread();
     }
@@ -127,7 +115,7 @@ public class DcMotorMaster {
                 currentTime = System.currentTimeMillis();
                 while (canRunMotorInputThread) {
                     // send motor input every 15 milliseconds
-                    if (System.currentTimeMillis() >= currentTime + 1000) {
+                    if (System.currentTimeMillis() >= currentTime + 15) {
                         currentTime = System.currentTimeMillis();
                         motor1 = new DcMotorInput(motorImpl1.power, "");
                         motor2 = new DcMotorInput(motorImpl2.power, "");

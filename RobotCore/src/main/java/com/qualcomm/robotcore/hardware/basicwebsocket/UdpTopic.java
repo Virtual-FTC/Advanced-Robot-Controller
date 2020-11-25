@@ -1,7 +1,5 @@
 package com.qualcomm.robotcore.hardware.basicwebsocket;
 
-
-
 import com.qualcomm.robotcore.hardware.basicwebsocket.callback.TopicCallback;
 import com.qualcomm.robotcore.hardware.basicwebsocket.messages.Message;
 

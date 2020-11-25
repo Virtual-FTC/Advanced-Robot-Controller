@@ -537,10 +537,10 @@ public class MainActivity extends AppCompatActivity {
                 "\nBR: " + (Math.hypot(x, -y) * Math.cos(Math.atan2(y, -x) - Math.PI / 4) + rx / 2));
 
         if (canUpdateGamepad) {
-            opMode.gamepad1.left_stick_x = x;
-            opMode.gamepad1.left_stick_y = y;
-            opMode.gamepad1.right_stick_x = rx;
-            opMode.gamepad1.right_stick_y = ry;
+            opMode.gamepad1.left_stick_x = (float) (Math.round(x * 100.0) / 100.0);
+            opMode.gamepad1.left_stick_y = (float) (Math.round(y * 100.0) / 100.0);
+            opMode.gamepad1.right_stick_x = (float) (Math.round(rx * 100.0) / 100.0);
+            opMode.gamepad1.right_stick_y = (float) (Math.round(ry * 100.0) / 100.0);
         } else {
             System.out.println("x: " + x + ", y: " + y + ", ");
         }

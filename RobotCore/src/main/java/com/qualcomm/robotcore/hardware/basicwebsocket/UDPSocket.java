@@ -36,7 +36,7 @@ public class UDPSocket {
     }
 
     public void disconnect() {
-        socket.disconnect();
+        socket.close();
     }
 
     public void receiveData() {
