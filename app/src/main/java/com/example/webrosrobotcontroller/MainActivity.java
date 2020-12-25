@@ -25,7 +25,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Gamepad;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -121,20 +120,24 @@ public class MainActivity extends AppCompatActivity {
                 final int status = (Integer) v.getTag();
                 if (status == 0) {
                     if (!robotVM_IPAddress.getText().toString().equals("")) {
-                        DcMotorMaster.ip = robotVM_IPAddress.getText().toString();
-                    }
-                    try {
-                        Class opModeClass = Class.forName("org.firstinspires.ftc.teamcode." + opModeSelector.getSelectedItem().toString());//opModeSelector.getSelectedItem().toString().getClass();
-                        opMode = (OpMode) opModeClass.newInstance();
-                        initStartButton.setEnabled(false);
-                        initOpModeThread();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        UnityRTC.ip = robotVM_IPAddress.getText().toString();
+                        UnityRTC.connect();
+
+                        try {
+                            Class opModeClass = Class.forName("org.firstinspires.ftc.teamcode." + opModeSelector.getSelectedItem().toString());//opModeSelector.getSelectedItem().toString().getClass();
+                            opMode = (OpMode) opModeClass.newInstance();
+                            initStartButton.setEnabled(false);
+                            initOpModeThread();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        initStartButton.setText("START");
+                        v.setTag(1); //pause
+                    } else {
+                        Toast.makeText(MainActivity.this, "There is no IP Address to connect to. Please enter an IP address on the top.", Toast.LENGTH_LONG).show();
                     }
 
-
-                    initStartButton.setText("START");
-                    v.setTag(1); //pause
                 } else if (status == 1) {
                     initStartButton.setText("STOP");
                     v.setTag(2); //pause
@@ -142,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                     launchOpModeThread(selectedProgramIsLinearOpMode);
                 } else if (status == 2) {
                     opMode.stop();
-                    DcMotorMaster.disconnect();
+                    UnityRTC.disconnect();
                     opModeThread.interrupt();
                     opModeThread.interrupt();
                     initStartButton.setText("INIT");
@@ -215,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorMaster.ip, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + UnityRTC.ip, Toast.LENGTH_SHORT).show();
                                 Button initStartButton = (Button) findViewById(R.id.initStartButton);
                                 initStartButton.setEnabled(true);
                                 initStartButton.setTag(0);
@@ -301,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception ignore) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorMaster.ip, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + UnityRTC.ip, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -397,6 +400,8 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
