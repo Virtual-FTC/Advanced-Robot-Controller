@@ -25,11 +25,17 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -54,6 +60,38 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Thread thread = new Thread(() -> {
+            try {
+                String address = "35.197.110.179";
+                int port = 9050;
+                DatagramSocket socket = new DatagramSocket();
+                socket.connect(InetAddress.getByName(address), port);
+                while (true) {
+                    Thread.sleep(30);
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("motor1", DcMotorMaster.motorImpl1.power);
+                        jsonObject.put("motor2", DcMotorMaster.motorImpl2.power);
+                        jsonObject.put("motor3", DcMotorMaster.motorImpl3.power);
+                        jsonObject.put("motor4", DcMotorMaster.motorImpl4.power);
+                        String message = jsonObject.toString();
+                        socket.send(new DatagramPacket(message.getBytes(), message.length()));
+//                        byte[] buffer = new byte[1024];
+//                        DatagramPacket response = new DatagramPacket(buffer, buffer.length);
+//                        socket.receive(response);
+//                        System.out.println("RESPONSE: " + new String(buffer, 0, response.getLength()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        });
+        thread.start();
+
         canCheckForGamepad = true;
         DcMotorImpl.filesDir = this.getFilesDir();
         launchGamepadThread();
@@ -119,24 +157,21 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final int status = (Integer) v.getTag();
                 if (status == 0) {
-                    if (!robotVM_IPAddress.getText().toString().equals("")) {
-                        UnityRTC.ip = robotVM_IPAddress.getText().toString();
-                        UnityRTC.connect();
-
-                        try {
-                            Class opModeClass = Class.forName("org.firstinspires.ftc.teamcode." + opModeSelector.getSelectedItem().toString());//opModeSelector.getSelectedItem().toString().getClass();
-                            opMode = (OpMode) opModeClass.newInstance();
-                            initStartButton.setEnabled(false);
-                            initOpModeThread();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        initStartButton.setText("START");
-                        v.setTag(1); //pause
-                    } else {
-                        Toast.makeText(MainActivity.this, "There is no IP Address to connect to. Please enter an IP address on the top.", Toast.LENGTH_LONG).show();
+//                    if (!robotVM_IPAddress.getText().toString().equals("")) {
+                    try {
+                        Class opModeClass = Class.forName("org.firstinspires.ftc.teamcode." + opModeSelector.getSelectedItem().toString());//opModeSelector.getSelectedItem().toString().getClass();
+                        opMode = (OpMode) opModeClass.newInstance();
+                        initStartButton.setEnabled(false);
+                        initOpModeThread();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+
+                    initStartButton.setText("START");
+                    v.setTag(1); //pause
+//                    } else {
+//                        Toast.makeText(MainActivity.this, "There is no IP Address to connect to. Please enter an IP address on the top.", Toast.LENGTH_LONG).show();
+//                    }
 
                 } else if (status == 1) {
                     initStartButton.setText("STOP");
@@ -145,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
                     launchOpModeThread(selectedProgramIsLinearOpMode);
                 } else if (status == 2) {
                     opMode.stop();
-                    UnityRTC.disconnect();
                     opModeThread.interrupt();
                     opModeThread.interrupt();
                     initStartButton.setText("INIT");
@@ -157,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private String getConfigurationFromYAMLFile() {
         try {
             StringBuilder sb = new StringBuilder();
@@ -218,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + UnityRTC.ip, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM", Toast.LENGTH_SHORT).show();
                                 Button initStartButton = (Button) findViewById(R.id.initStartButton);
                                 initStartButton.setEnabled(true);
                                 initStartButton.setTag(0);
@@ -304,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception ignore) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + UnityRTC.ip, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -400,7 +435,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
-
 
 
     @Override
@@ -517,14 +551,14 @@ public class MainActivity extends AppCompatActivity {
                     MotionEvent.AXIS_RZ, historyPos);
         }
 
-        telemetryOutputTextField.setText("x: " + Math.round(x * 100.0) / 100.0 +
-                "\ny: " + Math.round(y * 100.0) / 100.0 +
-                "\nrx: " + Math.round(rx * 100.0) / 100.0 +
-                "\nry: " + Math.round(ry * 100.0) / 100.0 +
-                "\nFL: " + (Math.hypot(x, -y) * Math.cos(Math.atan2(y, -x) - Math.PI / 4) - rx / 2) +
-                "\nFR: " + (Math.hypot(x, -y) * Math.sin(Math.atan2(y, -x) - Math.PI / 4) + rx / 2) +
-                "\nBL: " + (Math.hypot(x, -y) * Math.sin(Math.atan2(y, -x) - Math.PI / 4) - rx / 2) +
-                "\nBR: " + (Math.hypot(x, -y) * Math.cos(Math.atan2(y, -x) - Math.PI / 4) + rx / 2));
+//        telemetryOutputTextField.setText("x: " + Math.round(x * 100.0) / 100.0 +
+//                "\ny: " + Math.round(y * 100.0) / 100.0 +
+//                "\nrx: " + Math.round(rx * 100.0) / 100.0 +
+//                "\nry: " + Math.round(ry * 100.0) / 100.0 +
+//                "\nFL: " + (Math.hypot(x, -y) * Math.cos(Math.atan2(y, -x) - Math.PI / 4) - rx / 2) +
+//                "\nFR: " + (Math.hypot(x, -y) * Math.sin(Math.atan2(y, -x) - Math.PI / 4) + rx / 2) +
+//                "\nBL: " + (Math.hypot(x, -y) * Math.sin(Math.atan2(y, -x) - Math.PI / 4) - rx / 2) +
+//                "\nBR: " + (Math.hypot(x, -y) * Math.cos(Math.atan2(y, -x) - Math.PI / 4) + rx / 2));
 
         if (canUpdateGamepad) {
             opMode.gamepad1.left_stick_x = (float) (Math.round(x * 100.0) / 100.0);

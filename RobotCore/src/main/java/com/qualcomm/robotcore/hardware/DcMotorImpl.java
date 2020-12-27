@@ -89,6 +89,7 @@ public class DcMotorImpl implements DcMotor {
                         DcMotorMaster.setDcMotor7(this);
                     } else if(i == 7) {
                         DcMotorMaster.setDcMotor8(this);
+                        DcMotorMaster.start();
                     }
                 }
             }
