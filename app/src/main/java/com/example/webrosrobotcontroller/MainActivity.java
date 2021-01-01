@@ -232,6 +232,19 @@ public class MainActivity extends AppCompatActivity {
                     launchOpModeThread(selectedProgramIsLinearOpMode);
                 } else if (status == 2) {
                     opMode.stop();
+                    DcMotorMaster.motorImpl1.power = 0.0;
+                    DcMotorMaster.motorImpl2.power = 0.0;
+                    DcMotorMaster.motorImpl3.power = 0.0;
+                    DcMotorMaster.motorImpl4.power = 0.0;
+                    DcMotorMaster.motorImpl5.power = 0.0;
+                    DcMotorMaster.motorImpl6.power = 0.0;
+                    DcMotorMaster.motorImpl7.power = 0.0;
+                    DcMotorMaster.motorImpl8.power = 0.0;
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     opModeThread.interrupt();
                     opModeThread.interrupt();
                     initStartButton.setText("INIT");
