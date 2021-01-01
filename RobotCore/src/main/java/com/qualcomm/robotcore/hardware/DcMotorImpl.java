@@ -109,7 +109,7 @@ public class DcMotorImpl implements DcMotor {
         this.mode = mode;
         power = 0.0;
         if (mode == RunMode.STOP_AND_RESET_ENCODER) {
-            encoderBasePosition = actualPosition;
+            encoderBasePosition = encoderPosition;
         }
     }
 
@@ -175,7 +175,7 @@ public class DcMotorImpl implements DcMotor {
      * @return number of encoder ticks
      */
     public synchronized int getCurrentPosition() {
-        return (int) (encoderPosition);
+        return (int) (encoderPosition - encoderBasePosition);
     }
 
     /**

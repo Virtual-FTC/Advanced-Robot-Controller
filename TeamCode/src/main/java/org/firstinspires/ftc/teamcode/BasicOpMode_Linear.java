@@ -16,10 +16,15 @@ public class BasicOpMode_Linear extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        motor1 = this.hardwareMap.dcMotor.get("motor1");
-        motor2 = this.hardwareMap.dcMotor.get("motor2");
-        motor3 = this.hardwareMap.dcMotor.get("motor3");
-        motor4 = this.hardwareMap.dcMotor.get("motor4");
+        motor1 = this.hardwareMap.dcMotor.get("frontLeft");
+        motor2 = this.hardwareMap.dcMotor.get("frontRight");
+        motor3 = this.hardwareMap.dcMotor.get("backLeft");
+        motor4 = this.hardwareMap.dcMotor.get("backRight");
+        motor4 = this.hardwareMap.dcMotor.get("intake");
+        motor4 = this.hardwareMap.dcMotor.get("hopper");
+        motor4 = this.hardwareMap.dcMotor.get("leftShooter");
+        motor4 = this.hardwareMap.dcMotor.get("rightShooter");
+
 //        waitForStart();
         motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -27,11 +32,15 @@ public class BasicOpMode_Linear extends LinearOpMode {
         motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Square movement example program
+        motor1.setPower(-1.0);
+        motor2.setPower(1.0);
+        motor3.setPower(-1.0);
+        motor4.setPower(1.0);
+//        moveForwardAndTurn();
+//        moveForwardAndTurn();
+//        moveForwardAndTurn();
+//        moveForwardAndTurn();
 
-        moveForwardAndTurn();
-        moveForwardAndTurn();
-        moveForwardAndTurn();
-        moveForwardAndTurn();
 
         requestOpModeStop();
     }
