@@ -605,14 +605,14 @@ public class MainActivity extends AppCompatActivity {
                     MotionEvent.AXIS_RZ, historyPos);
         }
 
-//        telemetryOutputTextField.setText("x: " + Math.round(x * 100.0) / 100.0 +
-//                "\ny: " + Math.round(y * 100.0) / 100.0 +
-//                "\nrx: " + Math.round(rx * 100.0) / 100.0 +
-//                "\nry: " + Math.round(ry * 100.0) / 100.0 +
-//                "\nFL: " + (Math.hypot(x, -y) * Math.cos(Math.atan2(y, -x) - Math.PI / 4) - rx / 2) +
-//                "\nFR: " + (Math.hypot(x, -y) * Math.sin(Math.atan2(y, -x) - Math.PI / 4) + rx / 2) +
-//                "\nBL: " + (Math.hypot(x, -y) * Math.sin(Math.atan2(y, -x) - Math.PI / 4) - rx / 2) +
-//                "\nBR: " + (Math.hypot(x, -y) * Math.cos(Math.atan2(y, -x) - Math.PI / 4) + rx / 2));
+        telemetryOutputTextField.setText("x: " + Math.round(x * 100.0) / 100.0 +
+                "\ny: " + Math.round(y * 100.0) / 100.0 +
+                "\nrx: " + Math.round(rx * 100.0) / 100.0 +
+                "\nry: " + Math.round(ry * 100.0) / 100.0 +
+                "\nFL: " + (Math.hypot(Math.round(x * 100.0) / 100.0, -Math.round(y * 100.0) / 100.0) * Math.cos(Math.atan2(Math.round(y * 100.0) / 100.0, -Math.round(x * 100.0) / 100.0) - Math.PI / 4) - Math.round(rx * 100.0) / 100.0 / 2) +
+                "\nFR: " + (Math.hypot(Math.round(x * 100.0) / 100.0, -Math.round(y * 100.0) / 100.0) * Math.sin(Math.atan2(Math.round(y * 100.0) / 100.0, -Math.round(x * 100.0) / 100.0) - Math.PI / 4) + Math.round(rx * 100.0) / 100.0 / 2) +
+                "\nBL: " + (Math.hypot(Math.round(x * 100.0) / 100.0, -Math.round(y * 100.0) / 100.0) * Math.sin(Math.atan2(Math.round(y * 100.0) / 100.0, -Math.round(x * 100.0) / 100.0) - Math.PI / 4) - Math.round(rx * 100.0) / 100.0 / 2) +
+                "\nBR: " + (Math.hypot(Math.round(x * 100.0) / 100.0, -Math.round(y * 100.0) / 100.0) * Math.cos(Math.atan2(Math.round(y * 100.0) / 100.0, -Math.round(x * 100.0) / 100.0) - Math.PI / 4) + Math.round(rx * 100.0) / 100.0 / 2));
 
         if (canUpdateGamepad) {
             opMode.gamepad1.left_stick_x = (float) (Math.round(x * 100.0) / 100.0);
