@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     boolean canCheckForGamepad = false;
     Thread UnityUDPSendThread;
     Thread UnityUDPReceiveThread;
-    String UnityUdpIpAddress = "192.168.1.49";
+    String UnityUdpIpAddress = "35.197.110.179";
     long previousReceiveTime = -1;
 
     @Override
@@ -173,11 +173,13 @@ public class MainActivity extends AppCompatActivity {
                                     DcMotorMaster.motorImpl8.encoderPosition = jsonObject.getDouble("motor8");
 
                                     if (previousReceiveTime != -1) {
-                                        TextView fpsTextView = findViewById(R.id.fpsNumber);
-                                        String fps = "" + Math.round(1000.0/(System.currentTimeMillis() - previousReceiveTime));
-                                        fpsTextView.setText(fps);
+                                        runOnUiThread(() -> {
+                                            TextView fpsTextView = findViewById(R.id.fpsNumber);
+                                            String fps = "" + Math.round(1000000000.0/(System.nanoTime() - previousReceiveTime));
+                                            fpsTextView.setText(fps);
+                                        });
                                     }
-                                    previousReceiveTime = System.currentTimeMillis();
+                                    previousReceiveTime = System.nanoTime();
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -232,6 +234,12 @@ public class MainActivity extends AppCompatActivity {
                     launchOpModeThread(selectedProgramIsLinearOpMode);
                 } else if (status == 2) {
                     opMode.stop();
+                    opModeThread.interrupt();
+                    opModeThread.interrupt();
+                    initStartButton.setText("INIT");
+                    v.setTag(0); //pause
+                    selectedProgramIsLinearOpMode = null;
+                    opModeThread = null;
                     DcMotorMaster.motorImpl1.power = 0.0;
                     DcMotorMaster.motorImpl2.power = 0.0;
                     DcMotorMaster.motorImpl3.power = 0.0;
@@ -245,12 +253,6 @@ public class MainActivity extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    opModeThread.interrupt();
-                    opModeThread.interrupt();
-                    initStartButton.setText("INIT");
-                    v.setTag(0); //pause
-                    selectedProgramIsLinearOpMode = null;
-                    opModeThread = null;
                     UnityUDPSendThread.interrupt();
                     UnityUDPReceiveThread.interrupt();
                 }
