@@ -33,8 +33,6 @@ package com.qualcomm.robotcore.eventloop.opmode;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.DcMotorOutput;
-
 import java.util.concurrent.TimeUnit;
 
 public abstract class OpMode {

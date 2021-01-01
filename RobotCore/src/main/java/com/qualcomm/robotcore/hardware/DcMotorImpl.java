@@ -66,26 +66,6 @@ public class DcMotorImpl implements DcMotor {
 
     private void checkMotorNumberAndUpdateMaster(String name) {
         try {
-//            String yourFilePath = filesDir + "/" + "activeConfig.txt";
-//            File file = new File(yourFilePath);
-//            FileInputStream fin = new FileInputStream(file);
-//            int c;
-//            String temp = "";
-//            while ((c = fin.read()) != -1) {
-//                temp = temp + (char) c;
-//            }
-//            fin.close();
-//
-//            StringBuilder sb = new StringBuilder();
-//            FileInputStream fis = new FileInputStream(new File(filesDir + "/" + temp + ".txt"));
-//            InputStreamReader isr = new InputStreamReader(fis);
-//            BufferedReader buff = new BufferedReader(isr);
-//
-//            String line;
-//            while ((line = buff.readLine()) != null) {
-//                sb.append(line + "\n");
-//            }
-//            fis.close();
             JsonReader jsonReader = Json.createReader(new StringReader(activeConfigContent));
             JsonObject object = jsonReader.readObject();
             jsonReader.close();
@@ -129,7 +109,7 @@ public class DcMotorImpl implements DcMotor {
         this.mode = mode;
         power = 0.0;
         if (mode == RunMode.STOP_AND_RESET_ENCODER) {
-            encoderBasePosition = actualPosition;
+            encoderBasePosition = encoderPosition;
         }
     }
 
@@ -195,7 +175,7 @@ public class DcMotorImpl implements DcMotor {
      * @return number of encoder ticks
      */
     public synchronized int getCurrentPosition() {
-        return (int) (encoderPosition);
+        return (int) (encoderPosition - encoderBasePosition);
     }
 
     /**

@@ -4,6 +4,11 @@ android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         applicationId "com.example.webrosrobotcontroller"
         minSdkVersion 24
@@ -29,6 +34,8 @@ dependencies {
     implementation 'org.java-websocket:Java-WebSocket:1.5.1'
     implementation 'org.glassfish:javax.json:1.0.4'
     implementation 'org.reflections:reflections:0.9.11'
+    implementation 'io.pristine:libjingle:11139@aar'
+//    implementation 'org.webrtc:google-webrtc:1.0.32006'
     implementation group: 'org.yaml', name: 'snakeyaml', version: '1.8'
     implementation project(path: ':RobotCore')
     implementation project(path: ':TeamCode')

@@ -15,19 +15,19 @@
             android:layout_height="match_parent">
 
             <RelativeLayout
+                android:id="@+id/topBar"
                 android:layout_width="match_parent"
                 android:layout_height="75dp"
-                android:id="@+id/topBar"
                 android:background="@android:color/black">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:text="11039-DS"
-                    android:textSize="20dp"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="10dp"
+                    android:text="Virtual-RC"
+                    android:textColor="@android:color/white"
+                    android:textSize="20dp" />
 
                 <RelativeLayout
                     android:layout_width="200dp"
@@ -36,84 +36,188 @@
 
                     <androidx.appcompat.widget.ActionMenuView
                         android:id="@+id/toolbar_bottom"
-                        android:layout_width="56dp"
                         style="@style/TextAppearance.AppCompat.Large"
+                        android:layout_width="56dp"
                         android:layout_height="?android:attr/actionBarSize"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginRight="10dp"/>
+                        android:layout_marginRight="10dp" />
 
                     <ImageView
+                        android:id="@+id/gamepadImage"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="0dp"
-                        android:id="@+id/gamepadImage"
                         android:layout_marginEnd="100dp"
-                        android:visibility="invisible"
-                        android:background="@drawable/ic_baseline_videogame_asset_24"/>
+                        android:background="@drawable/ic_baseline_videogame_asset_24"
+                        android:visibility="invisible" />
 
                     <TextView
+                        android:id="@+id/userLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@android:color/white"
-                        android:text="User 1"
-                        android:layout_centerHorizontal="true"
                         android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
-                        android:id="@+id/userLabel"
-                        android:layout_marginTop="10dp"/>
-
-
+                        android:text="User 1"
+                        android:textColor="@android:color/white" />
 
 
                 </RelativeLayout>
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_below="@+id/topBar"
                 android:id="@+id/infoBar"
+                android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:layout_below="@+id/topBar"
                 android:background="@drawable/background_border">
 
-                <EditText
+                <RelativeLayout
                     android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:hint="Robot VM IP"
-                    android:gravity="center"
-                    android:id="@+id/robotVM_IPAddress"
-                    android:inputType="number"
-                    android:digits="0123456789."
-                    android:layout_centerInParent="true"/>
+                    android:layout_height="75dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:background="@drawable/rounded_rectangle">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true">
+
+                        <TextView
+                            android:id="@+id/activeConfigTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:gravity="center"
+                            android:text="Active Configuration"
+                            android:textColor="@android:color/white"
+                            android:textSize="14dp" />
+
+                        <TextView
+                            android:id="@+id/activeConfigName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/activeConfigTitle"
+                            android:layout_centerHorizontal="true"
+                            android:gravity="center"
+                            android:text="..."
+                            android:textColor="@android:color/white"
+                            android:textSize="20dp" />
+                    </RelativeLayout>
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/circle">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true">
+
+                        <TextView
+                            android:id="@+id/fpsTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:gravity="center"
+                            android:text="FPS"
+                            android:textColor="@android:color/white"
+                            android:textSize="14dp" />
+
+                        <TextView
+                            android:id="@+id/fpsNumber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/fpsTitle"
+                            android:layout_centerHorizontal="true"
+                            android:gravity="center"
+                            android:text="..."
+                            android:textColor="@android:color/white"
+                            android:textSize="20dp" />
+                    </RelativeLayout>
+
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="115dp"
+                    android:background="@drawable/circle">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true">
+
+                        <TextView
+                            android:id="@+id/pingTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:gravity="center"
+                            android:text="Ping"
+                            android:textColor="@android:color/white"
+                            android:textSize="14dp" />
+
+                        <TextView
+                            android:id="@+id/pingNumber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/pingTitle"
+                            android:layout_centerHorizontal="true"
+                            android:gravity="center"
+                            android:text="..."
+                            android:textColor="@android:color/white"
+                            android:textSize="20dp" />
+                    </RelativeLayout>
+
+
+                </RelativeLayout>
 
 
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="match_parent"
                 android:id="@+id/opModeSelectorBar"
-                android:layout_below="@+id/infoBar"
+                android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_below="@+id/infoBar"
                 android:background="@color/redSuperLight">
+
                 <Spinner
                     android:id="@+id/classSelector"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_centerInParent="true"
                     android:layout_centerHorizontal="true"
-                    android:textAlignment="center"
+                    android:layout_marginTop="-50dp"
                     android:gravity="center"
-                    android:layout_marginTop="-50dp" />
+                    android:textAlignment="center" />
 
             </RelativeLayout>
 
 
             <RelativeLayout
-                android:layout_width="match_parent"
                 android:id="@+id/playButtonArea"
-                android:layout_below="@+id/opModeSelectorBar"
+                android:layout_width="match_parent"
                 android:layout_height="300dp"
+                android:layout_below="@+id/opModeSelectorBar"
                 android:background="@drawable/play_button_area_background">
 
                 <Button
@@ -122,26 +226,26 @@
                     android:layout_height="150dp"
                     android:layout_centerInParent="true"
                     android:background="@drawable/init_button"
-                    android:textSize="25dp"
+                    android:text="INIT"
                     android:textColor="@android:color/black"
-                    android:text="INIT" />
+                    android:textSize="25dp" />
 
             </RelativeLayout>
 
 
             <RelativeLayout
-                android:layout_width="match_parent"
                 android:id="@+id/telemetryArea"
-                android:layout_below="@+id/playButtonArea"
+                android:layout_width="match_parent"
                 android:layout_height="350dp"
-                android:padding="16dp"
-                android:background="@android:color/black">
+                android:layout_below="@+id/playButtonArea"
+                android:background="@android:color/black"
+                android:padding="16dp">
 
                 <TextView
+                    android:id="@+id/telemetryTextView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/telemetryTextView"
-                    android:textColor="@android:color/white"/>
+                    android:textColor="@android:color/white" />
 
                 <ProgressBar
                     android:id="@+id/loadingSign"

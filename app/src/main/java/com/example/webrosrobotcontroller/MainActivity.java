@@ -25,14 +25,17 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.basicwebsocket.Ros;
-import com.qualcomm.robotcore.hardware.basicwebsocket.Topic;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -47,27 +50,25 @@ public class MainActivity extends AppCompatActivity {
     Thread opModeThread;
     Thread gamepadCheckThread;
     ProgressBar progressBar;
-    EditText robotVM_IPAddress;
     String activeConfigurationName = "";
     TextView telemetryOutputTextField;
-
-    public static String rosIp = "35.232.174.143";
-    Ros client = null;
-    Topic configPub;
     boolean canCheckForGamepad = false;
-
+    Thread UnityUDPSendThread;
+    Thread UnityUDPReceiveThread;
+    String UnityUdpIpAddress = "192.168.1.49";
+    long previousReceiveTime = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         canCheckForGamepad = true;
         DcMotorImpl.filesDir = this.getFilesDir();
         launchGamepadThread();
         populateClassSelector();
         progressBar = findViewById(R.id.loadingSign);
         progressBar.setVisibility(View.INVISIBLE);
-        robotVM_IPAddress = findViewById(R.id.robotVM_IPAddress);
 
         telemetryOutputTextField = findViewById(R.id.telemetryTextView);
 
@@ -77,35 +78,45 @@ public class MainActivity extends AppCompatActivity {
 
         getMenuInflater().inflate(R.menu.menu, topMenu);
 
-        try {
-            String yourFilePath = MainActivity.this.getFilesDir() + "/" + "activeConfig.txt";
-            File file = new File(yourFilePath);
-            FileInputStream fin = new FileInputStream(file);
-            int c;
-            String temp = "";
-            while ((c = fin.read()) != -1) {
-                temp = temp + (char) c;
+        new Thread(() -> {
+            while(true) {
+                try {
+                    Thread.sleep(1000);
+                    String yourFilePath = MainActivity.this.getFilesDir() + "/" + "activeConfig.txt";
+                    File file = new File(yourFilePath);
+                    FileInputStream fin = new FileInputStream(file);
+                    int c;
+                    String temp = "";
+                    while ((c = fin.read()) != -1) {
+                        temp = temp + (char) c;
+                    }
+                    fin.close();
+                    activeConfigurationName = temp;
+
+
+                    StringBuilder sb = new StringBuilder();
+                    FileInputStream fis = new FileInputStream(new File(getFilesDir() + "/" + temp + ".txt"));
+                    InputStreamReader isr = new InputStreamReader(fis);
+                    BufferedReader buff = new BufferedReader(isr);
+                    String line;
+                    while ((line = buff.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    fis.close();
+
+                    DcMotorImpl.activeConfigContent = sb.toString();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    activeConfigurationName = "No Config Set";
+                }
+
+                runOnUiThread(() -> {
+                    TextView configTextView = findViewById(R.id.activeConfigName);
+                    configTextView.setText(activeConfigurationName);
+                });
             }
-            fin.close();
-            activeConfigurationName = temp;
-
-
-            StringBuilder sb = new StringBuilder();
-            FileInputStream fis = new FileInputStream(new File(getFilesDir() + "/" + temp + ".txt"));
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader buff = new BufferedReader(isr);
-            String line;
-            while ((line = buff.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-            fis.close();
-
-            DcMotorImpl.activeConfigContent = sb.toString();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            activeConfigurationName = "No Config Set";
-        }
+        }).start();
 
         topMenu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -126,10 +137,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final int status = (Integer) v.getTag();
                 if (status == 0) {
-                    if (!robotVM_IPAddress.getText().toString().equals("")) {
-                        DcMotorMaster.rosIp = robotVM_IPAddress.getText().toString();
-                        rosIp = robotVM_IPAddress.getText().toString();
-                    }
                     try {
                         Class opModeClass = Class.forName("org.firstinspires.ftc.teamcode." + opModeSelector.getSelectedItem().toString());//opModeSelector.getSelectedItem().toString().getClass();
                         opMode = (OpMode) opModeClass.newInstance();
@@ -139,36 +146,119 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-//                    try {
-//                        client = new Ros(new URI("ws://" + rosIp + ":9091"));
-//                        client.connect();
-//                        configPub = new Topic(client, "/config/motors", "std_msgs/String");
-//                        configPub.publish(new com.qualcomm.robotcore.hardware.basicwebsocket.messages.std.String(getConfigurationFromYAMLFile()));
-//                    } catch (Exception ignore) {
-//                    }
+                    /**Unity RX and TX thread init**/
 
+                    UnityUDPReceiveThread = new Thread(() -> {
+                        try {
+                            int port = 9051;
+                            DatagramSocket socket = new DatagramSocket();
+                            socket.connect(InetAddress.getByName(UnityUdpIpAddress), port);
+                            String message = "hello";
+                            socket.send(new DatagramPacket(message.getBytes(), message.length()));
+                            while (true) {
+                                try {
+                                    byte[] buffer = new byte[1024];
+                                    DatagramPacket response = new DatagramPacket(buffer, buffer.length);
+                                    socket.receive(response);
+                                    String responseText = new String(buffer, 0, response.getLength());
+
+                                    JSONObject jsonObject = new JSONObject(responseText);
+                                    DcMotorMaster.motorImpl1.encoderPosition = jsonObject.getDouble("motor1");
+                                    DcMotorMaster.motorImpl2.encoderPosition = jsonObject.getDouble("motor2");
+                                    DcMotorMaster.motorImpl3.encoderPosition = jsonObject.getDouble("motor3");
+                                    DcMotorMaster.motorImpl4.encoderPosition = jsonObject.getDouble("motor4");
+                                    DcMotorMaster.motorImpl5.encoderPosition = jsonObject.getDouble("motor5");
+                                    DcMotorMaster.motorImpl6.encoderPosition = jsonObject.getDouble("motor6");
+                                    DcMotorMaster.motorImpl7.encoderPosition = jsonObject.getDouble("motor7");
+                                    DcMotorMaster.motorImpl8.encoderPosition = jsonObject.getDouble("motor8");
+
+                                    if (previousReceiveTime != -1) {
+                                        TextView fpsTextView = findViewById(R.id.fpsNumber);
+                                        String fps = "" + Math.round(1000.0/(System.currentTimeMillis() - previousReceiveTime));
+                                        fpsTextView.setText(fps);
+                                    }
+                                    previousReceiveTime = System.currentTimeMillis();
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    });
+
+                    UnityUDPSendThread = new Thread(() -> {
+                        try {
+                            int port = 9050;
+                            DatagramSocket socket = new DatagramSocket();
+                            socket.connect(InetAddress.getByName(UnityUdpIpAddress), port);
+                            while (true) {
+                                Thread.sleep(30);
+                                try {
+                                    JSONObject jsonObject = new JSONObject();
+                                    jsonObject.put("motor1", DcMotorMaster.motorImpl1.power);
+                                    jsonObject.put("motor2", DcMotorMaster.motorImpl2.power);
+                                    jsonObject.put("motor3", DcMotorMaster.motorImpl3.power);
+                                    jsonObject.put("motor4", DcMotorMaster.motorImpl4.power);
+                                    jsonObject.put("motor5", DcMotorMaster.motorImpl5.power);
+                                    jsonObject.put("motor6", DcMotorMaster.motorImpl6.power);
+                                    jsonObject.put("motor7", DcMotorMaster.motorImpl7.power);
+                                    jsonObject.put("motor8", DcMotorMaster.motorImpl8.power);
+                                    String message = jsonObject.toString();
+                                    socket.send(new DatagramPacket(message.getBytes(), message.length()));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
 
                     initStartButton.setText("START");
                     v.setTag(1); //pause
+//                    } else {
+//                        Toast.makeText(MainActivity.this, "There is no IP Address to connect to. Please enter an IP address on the top.", Toast.LENGTH_LONG).show();
+//                    }
+
                 } else if (status == 1) {
                     initStartButton.setText("STOP");
+                    UnityUDPReceiveThread.start();
+                    UnityUDPSendThread.start();
                     v.setTag(2); //pause
 
                     launchOpModeThread(selectedProgramIsLinearOpMode);
                 } else if (status == 2) {
                     opMode.stop();
-                    DcMotorMaster.client.disconnect();
+                    DcMotorMaster.motorImpl1.power = 0.0;
+                    DcMotorMaster.motorImpl2.power = 0.0;
+                    DcMotorMaster.motorImpl3.power = 0.0;
+                    DcMotorMaster.motorImpl4.power = 0.0;
+                    DcMotorMaster.motorImpl5.power = 0.0;
+                    DcMotorMaster.motorImpl6.power = 0.0;
+                    DcMotorMaster.motorImpl7.power = 0.0;
+                    DcMotorMaster.motorImpl8.power = 0.0;
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     opModeThread.interrupt();
                     opModeThread.interrupt();
                     initStartButton.setText("INIT");
                     v.setTag(0); //pause
                     selectedProgramIsLinearOpMode = null;
                     opModeThread = null;
+                    UnityUDPSendThread.interrupt();
+                    UnityUDPReceiveThread.interrupt();
                 }
 
             }
         });
     }
+
     private String getConfigurationFromYAMLFile() {
         try {
             StringBuilder sb = new StringBuilder();
@@ -230,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorMaster.rosIp, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM", Toast.LENGTH_SHORT).show();
                                 Button initStartButton = (Button) findViewById(R.id.initStartButton);
                                 initStartButton.setEnabled(true);
                                 initStartButton.setTag(0);
@@ -316,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception ignore) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM: " + DcMotorMaster.rosIp, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to VM", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -412,6 +502,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -531,10 +622,10 @@ public class MainActivity extends AppCompatActivity {
                 "\ny: " + Math.round(y * 100.0) / 100.0 +
                 "\nrx: " + Math.round(rx * 100.0) / 100.0 +
                 "\nry: " + Math.round(ry * 100.0) / 100.0 +
-                "\nFL: " + (Math.hypot(x, -y) * Math.cos(Math.atan2(y, -x) - Math.PI / 4) - rx / 2) +
-                "\nFR: " + (Math.hypot(x, -y) * Math.sin(Math.atan2(y, -x) - Math.PI / 4) + rx / 2) +
-                "\nBL: " + (Math.hypot(x, -y) * Math.sin(Math.atan2(y, -x) - Math.PI / 4) - rx / 2) +
-                "\nBR: " + (Math.hypot(x, -y) * Math.cos(Math.atan2(y, -x) - Math.PI / 4) + rx / 2));
+                "\nFL: " + (Math.hypot(Math.round(x * 100.0) / 100.0, -Math.round(y * 100.0) / 100.0) * Math.cos(Math.atan2(Math.round(y * 100.0) / 100.0, -Math.round(x * 100.0) / 100.0) - Math.PI / 4) - Math.round(rx * 100.0) / 100.0 / 2) +
+                "\nFR: " + (Math.hypot(Math.round(x * 100.0) / 100.0, -Math.round(y * 100.0) / 100.0) * Math.sin(Math.atan2(Math.round(y * 100.0) / 100.0, -Math.round(x * 100.0) / 100.0) - Math.PI / 4) + Math.round(rx * 100.0) / 100.0 / 2) +
+                "\nBL: " + (Math.hypot(Math.round(x * 100.0) / 100.0, -Math.round(y * 100.0) / 100.0) * Math.sin(Math.atan2(Math.round(y * 100.0) / 100.0, -Math.round(x * 100.0) / 100.0) - Math.PI / 4) - Math.round(rx * 100.0) / 100.0 / 2) +
+                "\nBR: " + (Math.hypot(Math.round(x * 100.0) / 100.0, -Math.round(y * 100.0) / 100.0) * Math.cos(Math.atan2(Math.round(y * 100.0) / 100.0, -Math.round(x * 100.0) / 100.0) - Math.PI / 4) + Math.round(rx * 100.0) / 100.0 / 2));
 
         if (canUpdateGamepad) {
             opMode.gamepad1.left_stick_x = (float) (Math.round(x * 100.0) / 100.0);

@@ -1,13 +1,5 @@
 package com.qualcomm.robotcore.hardware;
 
-import com.qualcomm.robotcore.hardware.basicwebsocket.RosUDP;
-import com.qualcomm.robotcore.hardware.basicwebsocket.UdpTopic;
-import com.qualcomm.robotcore.hardware.basicwebsocket.callback.TopicCallback;
-import com.qualcomm.robotcore.hardware.basicwebsocket.messages.Message;
-import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.DcMotorInput;
-import com.qualcomm.robotcore.hardware.basicwebsocket.messages.ftc.MotorInputs;
-
-import javax.json.JsonObject;
 
 public class DcMotorMaster {
 
@@ -15,14 +7,14 @@ public class DcMotorMaster {
      * DcMotorImpl Objects
      */
 
-    private static DcMotorImpl motorImpl1;
-    private static DcMotorImpl motorImpl2;
-    private static DcMotorImpl motorImpl3;
-    private static DcMotorImpl motorImpl4;
-    private static DcMotorImpl motorImpl5;
-    private static DcMotorImpl motorImpl6;
-    private static DcMotorImpl motorImpl7;
-    private static DcMotorImpl motorImpl8;
+    public static DcMotorImpl motorImpl1;
+    public static DcMotorImpl motorImpl2;
+    public static DcMotorImpl motorImpl3;
+    public static DcMotorImpl motorImpl4;
+    public static DcMotorImpl motorImpl5;
+    public static DcMotorImpl motorImpl6;
+    public static DcMotorImpl motorImpl7;
+    public static DcMotorImpl motorImpl8;
 
     public static void setDcMotor1(DcMotorImpl dcMotor) {
         motorImpl1 = dcMotor;
@@ -56,87 +48,48 @@ public class DcMotorMaster {
         motorImpl8 = dcMotor;
     }
 
-    /**
-     * ROS Client Connection / Thread Starter
-     */
 
-    private static DcMotorInput motor1;
-    private static DcMotorInput motor2;
-    private static DcMotorInput motor3;
-    private static DcMotorInput motor4;
-    private static DcMotorInput motor5;
-    private static DcMotorInput motor6;
-    private static DcMotorInput motor7;
-    private static DcMotorInput motor8;
-
-    public static String rosIp = "35.232.174.143";
-    public static RosUDP client = null;
-    private static UdpTopic motorPub;
-    private static UdpTopic motorOutputPub;
-
+//    private static DatagramSocket socket;
 
     public static void start() {
-        client = new RosUDP(rosIp, 9092);
-        client.connect();
-
-        motorPub = new UdpTopic(client, "/unity/motors/input", "ftc_msgs/MotorInputs");
-
-        currentTime = System.currentTimeMillis();
-
-
-        motorOutputPub = new UdpTopic(client, "/unity/motors/output", "ftc_msgs/MotorOutputs");
-        motorOutputPub.subscribe(new TopicCallback() {
-            @Override
-            public void handleMessage(Message message) {
-                JsonObject data = message.toJsonObject();
-                if (data.getJsonNumber("encoder_data").doubleValue() != 0) {
-                    motorImpl1.actualPosition = data.getJsonNumber("encoder_data").doubleValue();
-                    motorImpl1.encoderPosition = motorImpl1.direction == DcMotorSimple.Direction.REVERSE ? (motorImpl1.encoderBasePosition - motorImpl1.actualPosition) : -(motorImpl1.encoderBasePosition - motorImpl1.actualPosition);
-                }
-            }
-        });
-
-        startMotorInputThread();
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    String address = "192.168.1.49";
+//                    int port = 9050;
+//                    socket = new DatagramSocket();
+//                    socket.connect(InetAddress.getByName(address), port);
+//                    while (true) {
+//                        Thread.sleep(30);
+//                        sendMotorPowers();
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//        thread.setPriority(Thread.MAX_PRIORITY);
+//        thread.start();
     }
 
-
-    /**
-     * Motor Input Functions
-     */
-
-    private static long currentTime;
-    private static boolean canRunMotorInputThread = false;
-
-    private static void startMotorInputThread() {
-        canRunMotorInputThread = true;
-        Thread motorInputThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                currentTime = System.currentTimeMillis();
-                while (canRunMotorInputThread) {
-                    // send motor input every 15 milliseconds
-                    if (System.currentTimeMillis() >= currentTime + 15) {
-                        currentTime = System.currentTimeMillis();
-                        motor1 = new DcMotorInput(motorImpl1.power, "");
-                        motor2 = new DcMotorInput(motorImpl2.power, "");
-                        motor3 = new DcMotorInput(motorImpl3.power, "");
-                        motor4 = new DcMotorInput(motorImpl4.power, "");
-                        motor5 = new DcMotorInput(motorImpl5.power, "");
-                        motor6 = new DcMotorInput(motorImpl6.power, "");
-                        motor7 = new DcMotorInput(motorImpl7.power, "");
-                        motor8 = new DcMotorInput(motorImpl8.power, "");
-                        publishCmd();
-                    }
-                }
-            }
-        });
-        motorInputThread.setName("MotorInputThread");
-        motorInputThread.setPriority(Thread.MAX_PRIORITY);
-        motorInputThread.start();
-    }
-
-    private static void publishCmd() {
-        MotorInputs motorInputs = new MotorInputs(motor1, motor2, motor3, motor4, motor5, motor6, motor7, motor8);
-        motorPub.publish(motorInputs);
-    }
+//    private static void sendMotorPowers() {
+//        try {
+//            JSONObject jsonObject = new JSONObject();
+//            jsonObject.put("motor1", DcMotorMaster.motorImpl1.power);
+//            jsonObject.put("motor2", DcMotorMaster.motorImpl2.power);
+//            jsonObject.put("motor3", DcMotorMaster.motorImpl3.power);
+//            jsonObject.put("motor4", DcMotorMaster.motorImpl4.power);
+//
+//            String message = jsonObject.toString();
+//            System.out.println("message: " + message);
+//            socket.send(new DatagramPacket(message.getBytes(), message.length()));
+////            byte[] buffer = new byte[1024];
+////            DatagramPacket response = new DatagramPacket(buffer, buffer.length);
+////            socket.receive(response);
+////            System.out.println("RESPONSE: " + new String(buffer, 0, response.getLength()));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
