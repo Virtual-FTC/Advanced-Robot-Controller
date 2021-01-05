@@ -67,7 +67,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        while (motor1.getCurrentPosition() > -1000 && motor2.getCurrentPosition() < 1000 && motor3.getCurrentPosition() > -1000 && motor4.getCurrentPosition() < 1000) {
+        while (motor1.getCurrentPosition() > -750 && motor2.getCurrentPosition() < 750 && motor3.getCurrentPosition() > -750 && motor4.getCurrentPosition() < 750) {
             motor1.setPower(-1.0);
             motor2.setPower(1.0);
             motor3.setPower(-1.0);
