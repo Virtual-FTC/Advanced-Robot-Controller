@@ -1,2 +1,2 @@
 # Advanced-Virtual-Controller
-Advanced version made for Android Studio users!
+Official Advanced Virtual Robot Controller Release for the Virtual Robot Simulator
