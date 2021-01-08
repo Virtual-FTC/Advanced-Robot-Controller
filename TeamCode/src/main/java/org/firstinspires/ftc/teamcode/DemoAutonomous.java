@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Basic OpMode Linear")
-public class BasicOpMode_Linear extends LinearOpMode {
+@Autonomous(name = "Demo Autonomous")
+public class DemoAutonomous extends LinearOpMode {
     // Declare OpMode members.
     private DcMotor motor1, motor2, motor3, motor4, motor5, motor6, motor7, motor8;
 
@@ -32,10 +32,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Square movement example program
-//        motor1.setPower(-0.7);
-//        motor2.setPower(0.7);
-//        motor3.setPower(-0.7);
-//        motor4.setPower(0.7);
+
         moveForwardAndTurn();
         moveForwardAndTurn();
         moveForwardAndTurn();
