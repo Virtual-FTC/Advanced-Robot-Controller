@@ -47,49 +47,4 @@ public class DcMotorMaster {
     public static void setDcMotor8(DcMotorImpl dcMotor) {
         motorImpl8 = dcMotor;
     }
-
-
-//    private static DatagramSocket socket;
-
-    public static void start() {
-//        Thread thread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    String address = "192.168.1.49";
-//                    int port = 9050;
-//                    socket = new DatagramSocket();
-//                    socket.connect(InetAddress.getByName(address), port);
-//                    while (true) {
-//                        Thread.sleep(30);
-//                        sendMotorPowers();
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        thread.setPriority(Thread.MAX_PRIORITY);
-//        thread.start();
-    }
-
-//    private static void sendMotorPowers() {
-//        try {
-//            JSONObject jsonObject = new JSONObject();
-//            jsonObject.put("motor1", DcMotorMaster.motorImpl1.power);
-//            jsonObject.put("motor2", DcMotorMaster.motorImpl2.power);
-//            jsonObject.put("motor3", DcMotorMaster.motorImpl3.power);
-//            jsonObject.put("motor4", DcMotorMaster.motorImpl4.power);
-//
-//            String message = jsonObject.toString();
-//            System.out.println("message: " + message);
-//            socket.send(new DatagramPacket(message.getBytes(), message.length()));
-////            byte[] buffer = new byte[1024];
-////            DatagramPacket response = new DatagramPacket(buffer, buffer.length);
-////            socket.receive(response);
-////            System.out.println("RESPONSE: " + new String(buffer, 0, response.getLength()));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 }

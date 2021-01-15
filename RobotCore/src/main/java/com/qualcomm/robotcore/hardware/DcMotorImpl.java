@@ -46,7 +46,7 @@ public class DcMotorImpl implements DcMotor {
 
     private ZeroPowerBehavior zeroPowerBehavior = ZeroPowerBehavior.BRAKE;
 
-    public double encoderPosition;
+    public double encoderPosition = 0.0;
 
     /**
      * For internal use only.
@@ -89,7 +89,6 @@ public class DcMotorImpl implements DcMotor {
                         DcMotorMaster.setDcMotor7(this);
                     } else if(i == 7) {
                         DcMotorMaster.setDcMotor8(this);
-                        DcMotorMaster.start();
                     }
                 }
             }

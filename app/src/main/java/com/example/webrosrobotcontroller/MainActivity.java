@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu, topMenu);
 
         new Thread(() -> {
-            while(true) {
+            while (true) {
                 try {
                     Thread.sleep(1000);
                     String yourFilePath = MainActivity.this.getFilesDir() + "/" + "activeConfig.txt";
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                                     if (previousReceiveTime != -1) {
                                         runOnUiThread(() -> {
                                             TextView fpsTextView = findViewById(R.id.fpsNumber);
-                                            String fps = "" + Math.round(1000000000.0/(System.nanoTime() - previousReceiveTime));
+                                            String fps = "" + Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime));
                                             fpsTextView.setText(fps);
                                         });
                                     }
@@ -275,8 +275,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             fis.close();
-
-            System.out.println(sb.toString());
             return sb.toString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -495,15 +493,26 @@ public class MainActivity extends AppCompatActivity {
                                 opMode.gamepad1.x = true;
                             } else if (keyCode == KeyEvent.KEYCODE_BUTTON_Y) {
                                 opMode.gamepad1.y = true;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_START) {
+                                opMode.gamepad1.start = true;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_L1) {
+                                opMode.gamepad1.left_bumper = true;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_R1) {
+                                opMode.gamepad1.right_bumper = true;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_THUMBL) {
+                                opMode.gamepad1.left_stick_button = true;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_THUMBR) {
+                                opMode.gamepad1.right_stick_button = true;
+                            } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+                                opMode.gamepad1.back = true;
                             }
-                            return true;
                         }
 
                         break;
                 }
             }
         }
-        return super.onKeyDown(keyCode, event);
+        return true;
     }
 
 
@@ -523,15 +532,25 @@ public class MainActivity extends AppCompatActivity {
                                 opMode.gamepad1.x = false;
                             } else if (keyCode == KeyEvent.KEYCODE_BUTTON_Y) {
                                 opMode.gamepad1.y = false;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_START) {
+                                opMode.gamepad1.start = true;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_L1) {
+                                opMode.gamepad1.left_bumper = false;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_R1) {
+                                opMode.gamepad1.right_bumper = false;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_THUMBL) {
+                                opMode.gamepad1.left_stick_button = false;
+                            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_THUMBR) {
+                                opMode.gamepad1.right_stick_button = false;
+                            } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+                                opMode.gamepad1.back = false;
                             }
-                            return true;
                         }
-
                         break;
                 }
             }
         }
-        return super.onKeyDown(keyCode, event);
+        return true;
     }
 
     /**
@@ -560,7 +579,7 @@ public class MainActivity extends AppCompatActivity {
             processJoystickInput(event, -1);
             return true;
         }
-        return super.onGenericMotionEvent(event);
+        return true;
     }
 
     private static float getCenteredAxis(MotionEvent event, InputDevice device, int axis, int historyPos) {
@@ -635,8 +654,12 @@ public class MainActivity extends AppCompatActivity {
             opMode.gamepad1.left_stick_y = (float) (Math.round(y * 100.0) / 100.0);
             opMode.gamepad1.right_stick_x = (float) (Math.round(rx * 100.0) / 100.0);
             opMode.gamepad1.right_stick_y = (float) (Math.round(ry * 100.0) / 100.0);
-        } else {
-            System.out.println("x: " + x + ", y: " + y + ", ");
+            opMode.gamepad1.left_trigger = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_BRAKE, historyPos);
+            opMode.gamepad1.right_trigger = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_GAS, historyPos);
+            opMode.gamepad1.dpad_up = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_Y, historyPos) == -1;
+            opMode.gamepad1.dpad_down = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_Y, historyPos) == 1;
+            opMode.gamepad1.dpad_left = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_X, historyPos) == -1;
+            opMode.gamepad1.dpad_right = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_X, historyPos) == 1;
         }
     }
 }

@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 28
     buildToolsVersion "30.0.2"
 
     compileOptions {
@@ -11,8 +11,8 @@ android {
 
     defaultConfig {
         applicationId "com.example.webrosrobotcontroller"
-        minSdkVersion 24
-        targetSdkVersion 30
+        minSdkVersion 23
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
