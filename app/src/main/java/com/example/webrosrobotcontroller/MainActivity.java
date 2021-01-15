@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     Thread UnityUDPReceiveThread;
     String UnityUdpIpAddress = "35.197.110.179";
     long previousReceiveTime = -1;
+    long startTime = System.currentTimeMillis();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,8 +176,14 @@ public class MainActivity extends AppCompatActivity {
                                     if (previousReceiveTime != -1) {
                                         runOnUiThread(() -> {
                                             TextView fpsTextView = findViewById(R.id.fpsNumber);
-                                            String fps = "" + Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime));
-                                            fpsTextView.setText(fps);
+                                            if(System.currentTimeMillis() > startTime + 500) {
+                                                if(Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime)) > 30 && Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime)) < 200) {
+                                                    String fps = "" + Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime));
+                                                    fpsTextView.setText(fps);
+                                                    startTime = System.currentTimeMillis();
+                                                }
+                                            }
+
                                         });
                                     }
                                     previousReceiveTime = System.nanoTime();
