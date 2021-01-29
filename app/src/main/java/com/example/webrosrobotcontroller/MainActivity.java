@@ -1,8 +1,5 @@
 package com.example.webrosrobotcontroller;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ActionMenuView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.InputDevice;
@@ -11,19 +8,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.qualcomm.robotcore.hardware.DcMotorMaster;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.ActionMenuView;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
+import com.qualcomm.robotcore.hardware.DcMotorMaster;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.json.JSONObject;
@@ -38,6 +38,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import dalvik.system.DexFile;
 
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     String UnityUdpIpAddress = "35.197.110.179";
     long previousReceiveTime = -1;
     long startTime = System.currentTimeMillis();
+    int robotNumber = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,38 @@ public class MainActivity extends AppCompatActivity {
         Menu topMenu = bottomBar.getMenu();
 
         getMenuInflater().inflate(R.menu.menu, topMenu);
+
+        Spinner spinner = findViewById(R.id.robotSelect);
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        List<CharSequence> list = new ArrayList<>();
+        for (int i = 1; i < 5; i++) {
+            list.add(Integer.toString(i));
+        }
+        adapter.addAll(list);
+        adapter.notifyDataSetChanged();
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(UnityUDPSendThread != null && UnityUDPReceiveThread != null) {
+                    if(UnityUDPSendThread.isAlive() && UnityUDPReceiveThread.isAlive()) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(MainActivity.this, "You must restart the program to control another robot.", Toast.LENGTH_LONG).show();
+                        });
+                    }
+                }
+                TextView textView = findViewById(R.id.robotSelectTitle);
+                runOnUiThread(() -> {
+                    textView.setText(Integer.toString(position + 1));
+                });
+
+                robotNumber = position + 1;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         new Thread(() -> {
             while (true) {
@@ -119,153 +153,147 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
-        topMenu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                canCheckForGamepad = false;
-                Intent intent = new Intent(MainActivity.this, ConfigurationActivity.class);
-                intent.putExtra("ACTIVE_CONFIGURATION_NAME", activeConfigurationName);
-                startActivity(intent);
-                return onOptionsItemSelected(item);
-            }
+        topMenu.getItem(0).setOnMenuItemClickListener(item -> {
+            canCheckForGamepad = false;
+            Intent intent = new Intent(MainActivity.this, ConfigurationActivity.class);
+            intent.putExtra("ACTIVE_CONFIGURATION_NAME", activeConfigurationName);
+            startActivity(intent);
+            return onOptionsItemSelected(item);
         });
 
-        final Button initStartButton = (Button) findViewById(R.id.initStartButton);
+        final Button initStartButton = findViewById(R.id.initStartButton);
         initStartButton.setTag(0);
         initStartButton.setText("INIT");
-        initStartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final int status = (Integer) v.getTag();
-                if (status == 0) {
+        initStartButton.setOnClickListener(v -> {
+            final int status = (Integer) v.getTag();
+            if (status == 0) {
+                try {
+                    Class opModeClass = Class.forName("org.firstinspires.ftc.teamcode." + opModeSelector.getSelectedItem().toString());//opModeSelector.getSelectedItem().toString().getClass();
+                    opMode = (OpMode) opModeClass.newInstance();
+                    initStartButton.setEnabled(false);
+                    initOpModeThread();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                /**Unity RX and TX thread init**/
+
+                UnityUDPReceiveThread = new Thread(() -> {
                     try {
-                        Class opModeClass = Class.forName("org.firstinspires.ftc.teamcode." + opModeSelector.getSelectedItem().toString());//opModeSelector.getSelectedItem().toString().getClass();
-                        opMode = (OpMode) opModeClass.newInstance();
-                        initStartButton.setEnabled(false);
-                        initOpModeThread();
+                        int port = robotNumber == 1 ? 9051 : robotNumber == 2 ? 9054 : robotNumber == 3 ? 9056 : 9058;
+                        DatagramSocket socket = new DatagramSocket();
+                        socket.connect(InetAddress.getByName(UnityUdpIpAddress), port);
+                        String message = "hello";
+                        socket.send(new DatagramPacket(message.getBytes(), message.length()));
+                        while (true) {
+                            try {
+                                byte[] buffer = new byte[1024];
+                                DatagramPacket response = new DatagramPacket(buffer, buffer.length);
+                                socket.receive(response);
+                                String responseText = new String(buffer, 0, response.getLength());
+
+                                JSONObject jsonObject = new JSONObject(responseText);
+                                DcMotorMaster.motorImpl1.encoderPosition = jsonObject.getDouble("motor1");
+                                DcMotorMaster.motorImpl2.encoderPosition = jsonObject.getDouble("motor2");
+                                DcMotorMaster.motorImpl3.encoderPosition = jsonObject.getDouble("motor3");
+                                DcMotorMaster.motorImpl4.encoderPosition = jsonObject.getDouble("motor4");
+                                DcMotorMaster.motorImpl5.encoderPosition = jsonObject.getDouble("motor5");
+                                DcMotorMaster.motorImpl6.encoderPosition = jsonObject.getDouble("motor6");
+                                DcMotorMaster.motorImpl7.encoderPosition = jsonObject.getDouble("motor7");
+                                DcMotorMaster.motorImpl8.encoderPosition = jsonObject.getDouble("motor8");
+
+                                if (previousReceiveTime != -1) {
+                                    runOnUiThread(() -> {
+                                        TextView fpsTextView = findViewById(R.id.fpsNumber);
+                                        if(System.currentTimeMillis() > startTime + 500) {
+                                            if(Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime)) > 30 && Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime)) < 200) {
+                                                String fps = "" + Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime));
+                                                fpsTextView.setText(fps);
+                                                startTime = System.currentTimeMillis();
+                                            }
+                                        }
+
+                                    });
+                                }
+                                previousReceiveTime = System.nanoTime();
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                    /**Unity RX and TX thread init**/
+                });
 
-                    UnityUDPReceiveThread = new Thread(() -> {
-                        try {
-                            int port = 9051;
-                            DatagramSocket socket = new DatagramSocket();
-                            socket.connect(InetAddress.getByName(UnityUdpIpAddress), port);
-                            String message = "hello";
-                            socket.send(new DatagramPacket(message.getBytes(), message.length()));
-                            while (true) {
-                                try {
-                                    byte[] buffer = new byte[1024];
-                                    DatagramPacket response = new DatagramPacket(buffer, buffer.length);
-                                    socket.receive(response);
-                                    String responseText = new String(buffer, 0, response.getLength());
-
-                                    JSONObject jsonObject = new JSONObject(responseText);
-                                    DcMotorMaster.motorImpl1.encoderPosition = jsonObject.getDouble("motor1");
-                                    DcMotorMaster.motorImpl2.encoderPosition = jsonObject.getDouble("motor2");
-                                    DcMotorMaster.motorImpl3.encoderPosition = jsonObject.getDouble("motor3");
-                                    DcMotorMaster.motorImpl4.encoderPosition = jsonObject.getDouble("motor4");
-                                    DcMotorMaster.motorImpl5.encoderPosition = jsonObject.getDouble("motor5");
-                                    DcMotorMaster.motorImpl6.encoderPosition = jsonObject.getDouble("motor6");
-                                    DcMotorMaster.motorImpl7.encoderPosition = jsonObject.getDouble("motor7");
-                                    DcMotorMaster.motorImpl8.encoderPosition = jsonObject.getDouble("motor8");
-
-                                    if (previousReceiveTime != -1) {
-                                        runOnUiThread(() -> {
-                                            TextView fpsTextView = findViewById(R.id.fpsNumber);
-                                            if(System.currentTimeMillis() > startTime + 500) {
-                                                if(Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime)) > 30 && Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime)) < 200) {
-                                                    String fps = "" + Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime));
-                                                    fpsTextView.setText(fps);
-                                                    startTime = System.currentTimeMillis();
-                                                }
-                                            }
-
-                                        });
-                                    }
-                                    previousReceiveTime = System.nanoTime();
-
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+                UnityUDPSendThread = new Thread(() -> {
+                    try {
+                        int port = robotNumber == 1 ? 9050 : robotNumber == 2 ? 9053 : robotNumber == 3 ? 9055 : 9057;
+                        DatagramSocket socket = new DatagramSocket();
+                        socket.connect(InetAddress.getByName(UnityUdpIpAddress), port);
+                        socket.send(new DatagramPacket("reset".getBytes(), "reset".length()));
+                        while (true) {
+                            Thread.sleep(30);
+                            try {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("motor1", DcMotorMaster.motorImpl1.power);
+                                jsonObject.put("motor2", DcMotorMaster.motorImpl2.power);
+                                jsonObject.put("motor3", DcMotorMaster.motorImpl3.power);
+                                jsonObject.put("motor4", DcMotorMaster.motorImpl4.power);
+                                jsonObject.put("motor5", DcMotorMaster.motorImpl5.power);
+                                jsonObject.put("motor6", DcMotorMaster.motorImpl6.power);
+                                jsonObject.put("motor7", DcMotorMaster.motorImpl7.power);
+                                jsonObject.put("motor8", DcMotorMaster.motorImpl8.power);
+                                String message = jsonObject.toString();
+                                socket.send(new DatagramPacket(message.getBytes(), message.length()));
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
 
-                    });
-
-                    UnityUDPSendThread = new Thread(() -> {
-                        try {
-                            int port = 9050;
-                            DatagramSocket socket = new DatagramSocket();
-                            socket.connect(InetAddress.getByName(UnityUdpIpAddress), port);
-                            socket.send(new DatagramPacket("reset".getBytes(), "reset".length()));
-                            while (true) {
-                                Thread.sleep(30);
-                                try {
-                                    JSONObject jsonObject = new JSONObject();
-                                    jsonObject.put("motor1", DcMotorMaster.motorImpl1.power);
-                                    jsonObject.put("motor2", DcMotorMaster.motorImpl2.power);
-                                    jsonObject.put("motor3", DcMotorMaster.motorImpl3.power);
-                                    jsonObject.put("motor4", DcMotorMaster.motorImpl4.power);
-                                    jsonObject.put("motor5", DcMotorMaster.motorImpl5.power);
-                                    jsonObject.put("motor6", DcMotorMaster.motorImpl6.power);
-                                    jsonObject.put("motor7", DcMotorMaster.motorImpl7.power);
-                                    jsonObject.put("motor8", DcMotorMaster.motorImpl8.power);
-                                    String message = jsonObject.toString();
-                                    socket.send(new DatagramPacket(message.getBytes(), message.length()));
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-
-                    initStartButton.setText("START");
-                    v.setTag(1); //pause
+                initStartButton.setText("START");
+                v.setTag(1); //pause
 //                    } else {
 //                        Toast.makeText(MainActivity.this, "There is no IP Address to connect to. Please enter an IP address on the top.", Toast.LENGTH_LONG).show();
 //                    }
 
-                } else if (status == 1) {
-                    initStartButton.setText("STOP");
-                    UnityUDPReceiveThread.start();
-                    UnityUDPSendThread.start();
-                    v.setTag(2); //pause
+            } else if (status == 1) {
+                initStartButton.setText("STOP");
+                UnityUDPReceiveThread.start();
+                UnityUDPSendThread.start();
+                v.setTag(2); //pause
 
-                    launchOpModeThread(selectedProgramIsLinearOpMode);
-                } else if (status == 2) {
-                    opMode.stop();
-                    opModeThread.interrupt();
-                    opModeThread.interrupt();
-                    initStartButton.setText("INIT");
-                    v.setTag(0); //pause
-                    selectedProgramIsLinearOpMode = null;
-                    opModeThread = null;
-                    DcMotorMaster.motorImpl1.power = 0.0;
-                    DcMotorMaster.motorImpl2.power = 0.0;
-                    DcMotorMaster.motorImpl3.power = 0.0;
-                    DcMotorMaster.motorImpl4.power = 0.0;
-                    DcMotorMaster.motorImpl5.power = 0.0;
-                    DcMotorMaster.motorImpl6.power = 0.0;
-                    DcMotorMaster.motorImpl7.power = 0.0;
-                    DcMotorMaster.motorImpl8.power = 0.0;
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    UnityUDPSendThread.interrupt();
-                    UnityUDPReceiveThread.interrupt();
+                launchOpModeThread(selectedProgramIsLinearOpMode);
+            } else if (status == 2) {
+                opMode.stop();
+                opModeThread.interrupt();
+                opModeThread.interrupt();
+                initStartButton.setText("INIT");
+                v.setTag(0); //pause
+                selectedProgramIsLinearOpMode = null;
+                opModeThread = null;
+                DcMotorMaster.motorImpl1.power = 0.0;
+                DcMotorMaster.motorImpl2.power = 0.0;
+                DcMotorMaster.motorImpl3.power = 0.0;
+                DcMotorMaster.motorImpl4.power = 0.0;
+                DcMotorMaster.motorImpl5.power = 0.0;
+                DcMotorMaster.motorImpl6.power = 0.0;
+                DcMotorMaster.motorImpl7.power = 0.0;
+                DcMotorMaster.motorImpl8.power = 0.0;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-
+                UnityUDPSendThread.interrupt();
+                UnityUDPReceiveThread.interrupt();
             }
+
         });
     }
 

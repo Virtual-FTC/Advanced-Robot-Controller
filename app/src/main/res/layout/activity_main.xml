@@ -76,7 +76,7 @@
                 android:background="@drawable/background_border">
 
                 <RelativeLayout
-                    android:layout_width="150dp"
+                    android:layout_width="115dp"
                     android:layout_height="75dp"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
@@ -94,7 +94,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
                             android:gravity="center"
-                            android:text="Active Configuration"
+                            android:text="Active Config"
                             android:textColor="@android:color/white"
                             android:textSize="14dp" />
 
@@ -104,10 +104,12 @@
                             android:layout_height="wrap_content"
                             android:layout_below="@id/activeConfigTitle"
                             android:layout_centerHorizontal="true"
+                            android:layout_marginTop="1dp"
                             android:gravity="center"
                             android:text="..."
+                            android:textStyle="bold"
                             android:textColor="@android:color/white"
-                            android:textSize="20dp" />
+                            android:textSize="15dp" />
                     </RelativeLayout>
 
 
@@ -144,8 +146,9 @@
                             android:layout_centerHorizontal="true"
                             android:gravity="center"
                             android:text="..."
+                            android:textStyle="bold"
                             android:textColor="@android:color/white"
-                            android:textSize="20dp" />
+                            android:textSize="15dp" />
                     </RelativeLayout>
 
 
@@ -153,12 +156,13 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+
                     android:layout_width="75dp"
                     android:layout_height="75dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="115dp"
-                    android:background="@drawable/circle">
+                    android:background="@drawable/rounded_rectangle">
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
@@ -166,25 +170,32 @@
                         android:layout_centerInParent="true">
 
                         <TextView
-                            android:id="@+id/pingTitle"
+                            android:id="@+id/robotNumberTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
+                            android:layout_marginLeft="7dp"
                             android:gravity="center"
-                            android:text="Ping"
+                            android:text="Robot #"
                             android:textColor="@android:color/white"
                             android:textSize="14dp" />
 
                         <TextView
-                            android:id="@+id/pingNumber"
+                            android:id="@+id/robotSelectTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_below="@id/pingTitle"
-                            android:layout_centerHorizontal="true"
                             android:gravity="center"
-                            android:text="..."
+                            android:layout_toRightOf="@id/robotNumberTitle"
+                            android:text="0"
+                            android:textStyle="bold"
                             android:textColor="@android:color/white"
-                            android:textSize="20dp" />
+                            android:textSize="14dp" />
+
+                        <Spinner
+                            android:id="@+id/robotSelect"
+                            android:layout_width="50dp"
+                            android:layout_height="25dp"
+                            android:layout_below="@id/robotSelectTitle"
+                            android:layout_marginLeft="22.5dp" />
                     </RelativeLayout>
 
 
