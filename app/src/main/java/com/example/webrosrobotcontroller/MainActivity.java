@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     long previousReceiveTime = -1;
     long startTime = System.currentTimeMillis();
     int robotNumber = 1;
+    boolean canUseSendSocket = false;
+    boolean canUseReceiveSocket = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
                     textView.setText(Integer.toString(position + 1));
                 });
 
+                System.out.println("R#: " + (position + 1));
                 robotNumber = position + 1;
             }
 
@@ -178,14 +181,17 @@ public class MainActivity extends AppCompatActivity {
 
                 /**Unity RX and TX thread init**/
 
+                canUseSendSocket = true;
+                canUseReceiveSocket = true;
                 UnityUDPReceiveThread = new Thread(() -> {
                     try {
                         int port = robotNumber == 1 ? 9051 : robotNumber == 2 ? 9054 : robotNumber == 3 ? 9056 : 9058;
+                        System.out.println("RECEIVE PORT: " + port);
                         DatagramSocket socket = new DatagramSocket();
                         socket.connect(InetAddress.getByName(UnityUdpIpAddress), port);
                         String message = "hello";
                         socket.send(new DatagramPacket(message.getBytes(), message.length()));
-                        while (true) {
+                        while (canUseReceiveSocket) {
                             try {
                                 byte[] buffer = new byte[1024];
                                 DatagramPacket response = new DatagramPacket(buffer, buffer.length);
@@ -221,6 +227,8 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+                        socket.close();
+                        System.out.println("x");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -230,10 +238,11 @@ public class MainActivity extends AppCompatActivity {
                 UnityUDPSendThread = new Thread(() -> {
                     try {
                         int port = robotNumber == 1 ? 9050 : robotNumber == 2 ? 9053 : robotNumber == 3 ? 9055 : 9057;
+                        System.out.println("RECEIVE PORT: " + port);
                         DatagramSocket socket = new DatagramSocket();
                         socket.connect(InetAddress.getByName(UnityUdpIpAddress), port);
                         socket.send(new DatagramPacket("reset".getBytes(), "reset".length()));
-                        while (true) {
+                        while (canUseSendSocket) {
                             Thread.sleep(30);
                             try {
                                 JSONObject jsonObject = new JSONObject();
@@ -251,9 +260,12 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+                        socket.close();
+                        System.out.println("1x");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
                 });
 
                 initStartButton.setText("START");
@@ -285,8 +297,10 @@ public class MainActivity extends AppCompatActivity {
                 DcMotorMaster.motorImpl6.power = 0.0;
                 DcMotorMaster.motorImpl7.power = 0.0;
                 DcMotorMaster.motorImpl8.power = 0.0;
+                canUseSendSocket = false;
+                canUseReceiveSocket = false;
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(1500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
