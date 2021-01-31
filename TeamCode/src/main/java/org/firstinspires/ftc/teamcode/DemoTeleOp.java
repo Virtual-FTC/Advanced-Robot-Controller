@@ -71,12 +71,18 @@ public class DemoTeleOp extends OpMode
             motor6.setPower(0.0);
         }
 
-        if(gamepad1.y) {
-            motor7.setPower(1.0);
+        if(gamepad1.left_bumper) {
+            motor8.setPower(0.1);
+        } else if(gamepad1.right_bumper) {
             motor8.setPower(1.0);
         } else {
-            motor7.setPower(0.0);
             motor8.setPower(0.0);
+        }
+
+        if(gamepad1.y) {
+            motor7.setPower(1.0);
+        } else {
+            motor7.setPower(0.0);
         }
     }
 
