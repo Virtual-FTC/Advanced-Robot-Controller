@@ -297,10 +297,15 @@ public class MainActivity extends AppCompatActivity {
                 DcMotorMaster.motorImpl6.power = 0.0;
                 DcMotorMaster.motorImpl7.power = 0.0;
                 DcMotorMaster.motorImpl8.power = 0.0;
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 canUseSendSocket = false;
                 canUseReceiveSocket = false;
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
