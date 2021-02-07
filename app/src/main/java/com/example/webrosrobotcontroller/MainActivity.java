@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 canUseReceiveSocket = true;
                 UnityUDPReceiveThread = new Thread(() -> {
                     try {
-                        int port = robotNumber == 1 ? 9051 : robotNumber == 2 ? 9054 : robotNumber == 3 ? 9056 : 9058;
+                        int port = robotNumber == 1 ? 9051 : robotNumber == 2 ? 9057 : robotNumber == 3 ? 9059 : 9061;
                         System.out.println("RECEIVE PORT: " + port);
                         DatagramSocket socket = new DatagramSocket();
                         socket.connect(InetAddress.getByName(UnityUdpIpAddress), port);
@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
 
                 UnityUDPSendThread = new Thread(() -> {
                     try {
-                        int port = robotNumber == 1 ? 9050 : robotNumber == 2 ? 9053 : robotNumber == 3 ? 9055 : 9057;
+                        int port = robotNumber == 1 ? 9050 : robotNumber == 2 ? 9056 : robotNumber == 3 ? 9058 : 9060;
                         System.out.println("RECEIVE PORT: " + port);
                         DatagramSocket socket = new DatagramSocket();
                         socket.connect(InetAddress.getByName(UnityUdpIpAddress), port);
