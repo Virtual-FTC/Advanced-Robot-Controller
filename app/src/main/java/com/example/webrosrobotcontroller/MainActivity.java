@@ -223,8 +223,10 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 previousReceiveTime = System.nanoTime();
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            } catch (Exception ignore) {
+                                runOnUiThread(() -> {
+                                    Toast.makeText(this, "There was a runtime error. It is recommended to QUIT and restart the app.", Toast.LENGTH_LONG).show();
+                                });
                             }
                         }
                         socket.close();

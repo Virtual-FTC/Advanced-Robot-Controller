@@ -13,6 +13,8 @@ public class DemoTeleOp extends OpMode
     private DcMotor motor1, motor2, motor3, motor4, motor5, motor6, motor7, motor8;
     double fL_power, fR_power, bL_power, bR_power;
 
+    double launcherPower = 0.6;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -65,10 +67,16 @@ public class DemoTeleOp extends OpMode
             motor5.setPower(0.0);
         }
 
-        if(gamepad1.b) {
+        if(gamepad1.left_trigger > 0) {
             motor6.setPower(1.0);
         } else {
             motor6.setPower(0.0);
+        }
+
+        if(gamepad1.dpad_up && launcherPower < 1.0) {
+            launcherPower += 0.01;
+        } else if(gamepad1.dpad_down && launcherPower > 0.0) {
+            launcherPower -= 0.01;
         }
 
         if(gamepad1.left_bumper) {
@@ -79,8 +87,8 @@ public class DemoTeleOp extends OpMode
             motor8.setPower(0.0);
         }
 
-        if(gamepad1.y) {
-            motor7.setPower(1.0);
+        if(gamepad1.right_trigger > 0) {
+            motor7.setPower(launcherPower);
         } else {
             motor7.setPower(0.0);
         }
