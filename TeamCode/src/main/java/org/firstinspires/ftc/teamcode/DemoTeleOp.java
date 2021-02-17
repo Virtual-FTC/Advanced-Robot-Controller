@@ -13,7 +13,11 @@ public class DemoTeleOp extends OpMode
     private DcMotor motor1, motor2, motor3, motor4, motor5, motor6, motor7, motor8;
     double fL_power, fR_power, bL_power, bR_power;
 
-    double launcherPower = 0.6;
+    double launcherPower = 0.8;
+
+    boolean wantsToIncreaseShooterPower = false;
+    boolean wantsToDecreaseShooterPower = false;
+
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -74,10 +78,19 @@ public class DemoTeleOp extends OpMode
         }
 
         if(gamepad1.dpad_up && launcherPower < 1.0) {
-            launcherPower += 0.01;
+            wantsToIncreaseShooterPower = true;
         } else if(gamepad1.dpad_down && launcherPower > 0.0) {
-            launcherPower -= 0.01;
+            wantsToDecreaseShooterPower = true;
         }
+
+        if(wantsToIncreaseShooterPower && !gamepad1.dpad_up) {
+            launcherPower += 0.01;
+            wantsToIncreaseShooterPower = false;
+        } else if(wantsToDecreaseShooterPower && !gamepad1.dpad_down) {
+            launcherPower -= 0.01;
+            wantsToDecreaseShooterPower = false;
+        }
+
 
         if(gamepad1.left_bumper) {
             motor8.setPower(0.1);
