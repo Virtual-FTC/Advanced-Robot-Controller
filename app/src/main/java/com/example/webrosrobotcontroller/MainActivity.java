@@ -82,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
         Menu topMenu = bottomBar.getMenu();
 
         getMenuInflater().inflate(R.menu.menu, topMenu);
+        
+        Toast.makeText(this, "You are using Advanced VRC v1.0 Release", Toast.LENGTH_LONG).show();
 
         Spinner spinner = findViewById(R.id.robotSelect);
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item);
@@ -223,7 +225,8 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 previousReceiveTime = System.nanoTime();
 
-                            } catch (Exception ignore) {
+                            } catch (Exception e) {
+                                e.printStackTrace();
                                 runOnUiThread(() -> {
                                     Toast.makeText(this, "There was a runtime error. It is recommended to QUIT and restart the app.", Toast.LENGTH_LONG).show();
                                 });
