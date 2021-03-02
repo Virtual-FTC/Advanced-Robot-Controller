@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         Menu topMenu = bottomBar.getMenu();
 
         getMenuInflater().inflate(R.menu.menu, topMenu);
-        
+
         Toast.makeText(this, "You are using Advanced VRC v1.0 Release", Toast.LENGTH_LONG).show();
 
         Spinner spinner = findViewById(R.id.robotSelect);
