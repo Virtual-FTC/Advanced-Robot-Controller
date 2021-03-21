@@ -29,10 +29,10 @@ public class DemoTeleOp extends OpMode
         motor2 = this.hardwareMap.dcMotor.get("frontRight");
         motor3 = this.hardwareMap.dcMotor.get("backLeft");
         motor4 = this.hardwareMap.dcMotor.get("backRight");
-        motor5 = this.hardwareMap.dcMotor.get("intake");
-        motor6 = this.hardwareMap.dcMotor.get("hopper");
-        motor7 = this.hardwareMap.dcMotor.get("leftShooter");
-        motor8 = this.hardwareMap.dcMotor.get("rightShooter");
+        motor5 = this.hardwareMap.dcMotor.get("ringCollection");
+        motor6 = this.hardwareMap.dcMotor.get("ringLoader");
+        motor7 = this.hardwareMap.dcMotor.get("ringShooter");
+        motor8 = this.hardwareMap.dcMotor.get("wobbleActuator");
     }
 
     /*

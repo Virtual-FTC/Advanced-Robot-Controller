@@ -1,6 +1,8 @@
 package com.example.webrosrobotcontroller;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -26,11 +28,13 @@ import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.DcMotorMaster;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
@@ -83,8 +87,6 @@ public class MainActivity extends AppCompatActivity {
 
         getMenuInflater().inflate(R.menu.menu, topMenu);
 
-        Toast.makeText(this, "You are using Advanced VRC v1.0 Release", Toast.LENGTH_LONG).show();
-
         Spinner spinner = findViewById(R.id.robotSelect);
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
@@ -97,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(UnityUDPSendThread != null && UnityUDPReceiveThread != null) {
-                    if(UnityUDPSendThread.isAlive() && UnityUDPReceiveThread.isAlive()) {
+                if (UnityUDPSendThread != null && UnityUDPReceiveThread != null) {
+                    if (UnityUDPSendThread.isAlive() && UnityUDPReceiveThread.isAlive()) {
                         runOnUiThread(() -> {
                             Toast.makeText(MainActivity.this, "You must restart the program to control another robot.", Toast.LENGTH_LONG).show();
                         });
@@ -149,6 +151,11 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                     activeConfigurationName = "No Config Set";
+//                    SharedPreferences prefs = getSharedPreferences("com.example.webrosrobotcontroller", MODE_PRIVATE);
+//                    if (prefs.getBoolean("firstrun", true)) {
+                        activateDefaultConfiguration();
+//                        prefs.edit().putBoolean("firstrun", false).commit();
+//                    }
                 }
 
                 runOnUiThread(() -> {
@@ -213,8 +220,8 @@ public class MainActivity extends AppCompatActivity {
                                 if (previousReceiveTime != -1) {
                                     runOnUiThread(() -> {
                                         TextView fpsTextView = findViewById(R.id.fpsNumber);
-                                        if(System.currentTimeMillis() > startTime + 500) {
-                                            if(Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime)) > 30 && Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime)) < 200) {
+                                        if (System.currentTimeMillis() > startTime + 500) {
+                                            if (Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime)) > 30 && Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime)) < 200) {
                                                 String fps = "" + Math.round(1000000000.0 / (System.nanoTime() - previousReceiveTime));
                                                 fpsTextView.setText(fps);
                                                 startTime = System.currentTimeMillis();
@@ -228,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 runOnUiThread(() -> {
-                                    Toast.makeText(this, "There was a runtime error. It is recommended to QUIT and restart the app.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();//"There was a runtime error. It is recommended to QUIT and restart the app."
                                 });
                             }
                         }
@@ -319,6 +326,58 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    private void activateDefaultConfiguration() {
+        System.out.println("hi");
+        // Add Default Config
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.put("defaultRobot");
+            jsonObject.put("configurations", jsonArray);
+            writeFileOnInternalStorage(this, "configurations.txt", jsonObject.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            JSONArray jsonArray = new JSONArray();
+
+            jsonArray.put("frontLeft");
+            jsonArray.put("frontRight");
+            jsonArray.put("backLeft");
+            jsonArray.put("backRight");
+            jsonArray.put("ringCollection");
+            jsonArray.put("ringLoader");
+            jsonArray.put("ringShooter");
+            jsonArray.put("wobbleActuator");
+
+            jsonObject.put("devices", jsonArray);
+            writeFileOnInternalStorage(this, "defaultRobot" + ".txt", jsonObject.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        activeConfigurationName = "defaultRobot";
+
+        // Activate
+        writeFileOnInternalStorage(this, "activeConfig.txt", activeConfigurationName);
+        System.out.println("hi2");
+    }
+
+    public void writeFileOnInternalStorage(Context context, String fileName, String fileContent) {
+        try {
+            File file = new File(context.getFilesDir(), fileName);
+            FileWriter writer = new FileWriter(file);
+            writer.append(fileContent);
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private String getConfigurationFromYAMLFile() {

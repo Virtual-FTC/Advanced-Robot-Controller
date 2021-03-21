@@ -92,10 +92,10 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
                     jsonArray.put("frontRight");
                     jsonArray.put("backLeft");
                     jsonArray.put("backRight");
-                    jsonArray.put("intake");
-                    jsonArray.put("hopper");
-                    jsonArray.put("leftShooter");
-                    jsonArray.put("rightShooter");
+                    jsonArray.put("ringCollection");
+                    jsonArray.put("ringLoader");
+                    jsonArray.put("ringShooter");
+                    jsonArray.put("wobbleActuator");
 
                     jsonObject.put("devices", jsonArray);
                     writeFileOnInternalStorage(ConfigurationActivity.this, "defaultRobot" + ".txt", jsonObject.toString());
