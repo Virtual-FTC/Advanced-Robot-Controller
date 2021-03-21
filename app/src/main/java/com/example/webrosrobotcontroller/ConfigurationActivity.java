@@ -10,9 +10,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,17 +35,40 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ConfigurationActivity extends AppCompatActivity implements NewConfigurationDialog.NewConfigurationDialogListener {
+public class ConfigurationActivity extends AppCompatActivity implements NewConfigurationDialog.NewConfigurationDialogListener, CustomIpDialog.CustomIpDialogListener {
 
     String activeConfigurationName;
     TextView activeConfigurationNameLabel;
     ArrayList<String> existingConfigurationNames;
     ListView listView;
     ConfigurationListAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuration);
+
+        Spinner simIPSpinner = findViewById(R.id.simulatorIPAddress);
+        simIPSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i == 0) {
+                    MainActivity.UnityUdpIpAddress = "35.197.110.179";
+                } else if (i == 1) {
+                    MainActivity.UnityUdpIpAddress = "35.197.22.209";
+                } else if (i == 2) {
+                    CustomIpDialog customIpDialog = new CustomIpDialog();
+                    customIpDialog.show(getSupportFragmentManager(), "customIPDialog");
+                }
+                System.out.println(MainActivity.UnityUdpIpAddress);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
 
         activeConfigurationName = getIntent().getStringExtra("ACTIVE_CONFIGURATION_NAME");
         activeConfigurationNameLabel = findViewById(R.id.activeConfigurationNameLabel);
@@ -163,6 +189,12 @@ public class ConfigurationActivity extends AppCompatActivity implements NewConfi
         }
         adapter.notifyDataSetChanged();
 
+    }
+
+    @Override
+    public void setCustomIPAddress(String name) {
+        System.out.println("IP: " + name);
+        MainActivity.UnityUdpIpAddress = name;
     }
 
     public void writeFileOnInternalStorage(Context context, String fileName, String fileContent) {

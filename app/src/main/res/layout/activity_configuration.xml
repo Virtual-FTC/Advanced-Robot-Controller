@@ -48,6 +48,16 @@
             android:backgroundTint="@color/borderLight"
             />
 
+        <Spinner
+            android:id="@+id/simulatorIPAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:entries="@array/ipChoices"
+            android:textAlignment="center" />
+
         <Button
             android:layout_width="75dp"
             android:layout_height="wrap_content"

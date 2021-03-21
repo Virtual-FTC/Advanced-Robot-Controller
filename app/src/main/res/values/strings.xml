@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Demo VRC</string>
+    <string-array name="ipChoices">
+        <item>Sim 1</item>
+        <item>Sim 2</item>
+        <item>Custom</item>
+    </string-array>
 </resources>

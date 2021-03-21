@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     boolean canCheckForGamepad = false;
     Thread UnityUDPSendThread;
     Thread UnityUDPReceiveThread;
-    String UnityUdpIpAddress = "35.197.110.179";
+    public static String UnityUdpIpAddress = "35.197.110.179";
     long previousReceiveTime = -1;
     long startTime = System.currentTimeMillis();
     int robotNumber = 1;
