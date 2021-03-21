@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Telemetry;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Demo Teleop", group="TeleOp")
@@ -17,7 +18,6 @@ public class DemoTeleOp extends OpMode
 
     boolean wantsToIncreaseShooterPower = false;
     boolean wantsToDecreaseShooterPower = false;
-
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -105,6 +105,9 @@ public class DemoTeleOp extends OpMode
         } else {
             motor7.setPower(0.0);
         }
+
+        Telemetry.addData("Current Launcher Power", launcherPower);
+        Telemetry.update();
     }
 
     /*

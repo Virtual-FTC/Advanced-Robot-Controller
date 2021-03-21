@@ -1,16 +1,12 @@
 package com.qualcomm.robotcore.hardware;
 
 public class Telemetry {
-    boolean isAutoClearing = false;
-    public void setAutoClear(boolean state) {
-        isAutoClearing = state;
-    }
 
-    String telemetryText = "";
+    public static String telemetryText = "";
+    public static boolean shouldUpdateTelemetry = false;
 
-    public void addData(String caption, Object... data) {
-        if(isAutoClearing) telemetryText = "";
-        telemetryText += "\n" + caption + ": " + data.toString();
+    public static void addData(String caption, Object... data) {
+        telemetryText = "\n" + caption + ": " + data.toString();
     }
 
     /**
@@ -18,15 +14,14 @@ public class Telemetry {
      * @param caption
      * @param data  data object to display
      */
-    public void addData(String caption, Object data) {
-        if(isAutoClearing) telemetryText = "";
-        telemetryText += "\n" + caption + ": " + data.toString();
+    public static void addData(String caption, Object data) {
+        telemetryText = "\n" + caption + ": " + data.toString();
     }
 
     /**
      * Clear the telemetry display, then write any data that has been added since the previous update.
      */
-    public void update() {
-        //TODO: add implementation for telemetry on textView
+    public static void update() {
+        shouldUpdateTelemetry = true;
     }
 }

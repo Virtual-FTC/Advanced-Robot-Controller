@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.DcMotorMaster;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.Telemetry;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
                     activeConfigurationName = "No Config Set";
 //                    SharedPreferences prefs = getSharedPreferences("com.example.webrosrobotcontroller", MODE_PRIVATE);
 //                    if (prefs.getBoolean("firstrun", true)) {
-                        activateDefaultConfiguration();
+                    activateDefaultConfiguration();
 //                        prefs.edit().putBoolean("firstrun", false).commit();
 //                    }
                 }
@@ -525,7 +526,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception ignore) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(MainActivity.this, "Unable to connect to VM", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Unable to connect to Simulator", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -537,6 +538,10 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     MainActivity.this.wait(2500); //wait for 2.5 seconds to run any init code and establish web socket communication
                     while (opModeThread != null) {
+//                        if (Telemetry.shouldUpdateTelemetry) {
+//                            telemetryOutputTextField.setText(Telemetry.telemetryText);
+//                            Telemetry.shouldUpdateTelemetry = false;
+//                        }
                         try {
                             opMode.loop();
                         } catch (Exception ignore) {
@@ -758,14 +763,12 @@ public class MainActivity extends AppCompatActivity {
                     MotionEvent.AXIS_RZ, historyPos);
         }
 
-        telemetryOutputTextField.setText("x: " + Math.round(x * 100.0) / 100.0 +
-                "\ny: " + Math.round(y * 100.0) / 100.0 +
-                "\nrx: " + Math.round(rx * 100.0) / 100.0 +
-                "\nry: " + Math.round(ry * 100.0) / 100.0 +
-                "\nFL: " + (Math.hypot(Math.round(x * 100.0) / 100.0, -Math.round(y * 100.0) / 100.0) * Math.cos(Math.atan2(Math.round(y * 100.0) / 100.0, -Math.round(x * 100.0) / 100.0) - Math.PI / 4) - Math.round(rx * 100.0) / 100.0 / 2) +
-                "\nFR: " + (Math.hypot(Math.round(x * 100.0) / 100.0, -Math.round(y * 100.0) / 100.0) * Math.sin(Math.atan2(Math.round(y * 100.0) / 100.0, -Math.round(x * 100.0) / 100.0) - Math.PI / 4) + Math.round(rx * 100.0) / 100.0 / 2) +
-                "\nBL: " + (Math.hypot(Math.round(x * 100.0) / 100.0, -Math.round(y * 100.0) / 100.0) * Math.sin(Math.atan2(Math.round(y * 100.0) / 100.0, -Math.round(x * 100.0) / 100.0) - Math.PI / 4) - Math.round(rx * 100.0) / 100.0 / 2) +
-                "\nBR: " + (Math.hypot(Math.round(x * 100.0) / 100.0, -Math.round(y * 100.0) / 100.0) * Math.cos(Math.atan2(Math.round(y * 100.0) / 100.0, -Math.round(x * 100.0) / 100.0) - Math.PI / 4) + Math.round(rx * 100.0) / 100.0 / 2));
+
+        ImageView gamepadImage = findViewById(R.id.gamepadImage);
+        gamepadImage.setVisibility(View.VISIBLE);
+
+
+//        telemetryOutputTextField.setText("Gamepad Detected");
 
         if (canUpdateGamepad) {
             opMode.gamepad1.left_stick_x = (float) (Math.round(x * 100.0) / 100.0);
