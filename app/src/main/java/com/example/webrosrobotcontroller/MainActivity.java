@@ -149,8 +149,8 @@ public class MainActivity extends AppCompatActivity {
 
                     DcMotorImpl.activeConfigContent = sb.toString();
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception ignore) {
+//                    e.printStackTrace();
                     activeConfigurationName = "No Config Set";
 //                    SharedPreferences prefs = getSharedPreferences("com.example.webrosrobotcontroller", MODE_PRIVATE);
 //                    if (prefs.getBoolean("firstrun", true)) {
@@ -185,8 +185,8 @@ public class MainActivity extends AppCompatActivity {
                     opMode = (OpMode) opModeClass.newInstance();
                     initStartButton.setEnabled(false);
                     initOpModeThread();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception ignore) {
+//                    e.printStackTrace();
                 }
 
                 /**Unity RX and TX thread init**/
@@ -233,16 +233,16 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 previousReceiveTime = System.nanoTime();
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            } catch (Exception ignore) {
+//                                e.printStackTrace();
 //                                runOnUiThread(() -> {
 //                                    Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();//"There was a runtime error. It is recommended to QUIT and restart the app."
 //                                });
                             }
                         }
                         socket.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (Exception ignore) {
+//                        e.printStackTrace();
                     }
 
                 });
@@ -268,14 +268,13 @@ public class MainActivity extends AppCompatActivity {
                                 jsonObject.put("motor8", DcMotorMaster.motorImpl8.power);
                                 String message = jsonObject.toString();
                                 socket.send(new DatagramPacket(message.getBytes(), message.length()));
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            } catch (Exception ignore) {
+//                                e.printStackTrace();
                             }
                         }
                         socket.close();
-                        System.out.println("1x");
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (Exception ignore) {
+//                        e.printStackTrace();
                     }
 
                 });
@@ -311,15 +310,15 @@ public class MainActivity extends AppCompatActivity {
                 DcMotorMaster.motorImpl8.power = 0.0;
                 try {
                     Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException ignore) {
+//                    e.printStackTrace();
                 }
                 canUseSendSocket = false;
                 canUseReceiveSocket = false;
                 try {
                     Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException ignore) {
+//                    e.printStackTrace();
                 }
                 UnityUDPSendThread.interrupt();
                 UnityUDPReceiveThread.interrupt();
@@ -338,8 +337,8 @@ public class MainActivity extends AppCompatActivity {
             jsonArray.put("defaultRobot");
             jsonObject.put("configurations", jsonArray);
             writeFileOnInternalStorage(this, "configurations.txt", jsonObject.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignore) {
+//            e.printStackTrace();
         }
 
         try {
@@ -357,8 +356,8 @@ public class MainActivity extends AppCompatActivity {
 
             jsonObject.put("devices", jsonArray);
             writeFileOnInternalStorage(this, "defaultRobot" + ".txt", jsonObject.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignore) {
+//            e.printStackTrace();
         }
 
         activeConfigurationName = "defaultRobot";
@@ -375,8 +374,8 @@ public class MainActivity extends AppCompatActivity {
             writer.append(fileContent);
             writer.flush();
             writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignore) {
+//            e.printStackTrace();
         }
     }
 
@@ -394,8 +393,8 @@ public class MainActivity extends AppCompatActivity {
 
             fis.close();
             return sb.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignore) {
+//            e.printStackTrace();
             return "[{\"frc\": \"frontLeft\", \"sim\": \"motor1\"},{\"frc\": \"frontRight\", \"sim\": \"motor2\"},{\"frc\": \"backLeft\", \"sim\": \"motor3\"},{\"frc\": \"backRight\", \"sim\": \"motor4\"},{\"frc\": \"intake\", \"sim\": \"motor5\"},{\"frc\": \"hopper\", \"sim\": \"motor6\"},{\"frc\": \"leftShooter\", \"sim\": \"motor7\"},{\"frc\": \"rightShooter\", \"sim\": \"motor8\"}]";
         }
     }
@@ -408,8 +407,8 @@ public class MainActivity extends AppCompatActivity {
                     checkForGamepad();
                     try {
                         Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } catch (InterruptedException ignore) {
+//                        e.printStackTrace();
                     }
                 }
             }
@@ -480,8 +479,8 @@ public class MainActivity extends AppCompatActivity {
                     allClasses.add(className.substring(className.lastIndexOf(".") + 1));
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
+//            e.printStackTrace();
         }
 
 //        ArrayList<String> classesWithValidAnnotations = new ArrayList<>();
@@ -520,8 +519,8 @@ public class MainActivity extends AppCompatActivity {
                                 initStartButton.setText("INIT");
                             }
                         });
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } catch (InterruptedException ignore) {
+//                        e.printStackTrace();
                     } catch (Exception ignore) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
