@@ -235,13 +235,12 @@ public class MainActivity extends AppCompatActivity {
 
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                runOnUiThread(() -> {
-                                    Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();//"There was a runtime error. It is recommended to QUIT and restart the app."
-                                });
+//                                runOnUiThread(() -> {
+//                                    Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();//"There was a runtime error. It is recommended to QUIT and restart the app."
+//                                });
                             }
                         }
                         socket.close();
-                        System.out.println("x");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
